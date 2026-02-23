@@ -359,20 +359,51 @@
         .status-message.error { display: block; background: #f8d7da; color: #721c24; }
         .status-message.info { display: block; background: #d1ecf1; color: #0c5460; }
 
-        /* ===== VOLUME ACCORDION ===== */
+        /* ===== VOLUME CHECKLIST ===== */
+        .volume-checklist {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            margin-bottom: 18px;
+        }
+        .volume-check-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border: 1px solid var(--win-border);
+            border-radius: 5px; background: var(--win-white);
+            cursor: pointer; transition: all 0.15s; user-select: none;
+        }
+        .volume-check-item:hover { border-color: var(--win-red); }
+        .volume-check-item.checked {
+            border-color: var(--win-red); background: #fef2f4;
+        }
+        .volume-check-item input[type="checkbox"] {
+            width: 16px; height: 16px; accent-color: var(--win-red);
+            cursor: pointer;
+        }
+        .volume-check-item .vol-check-label {
+            font-size: 13px; font-weight: 600; color: var(--win-black);
+            cursor: pointer;
+        }
+        .volume-check-item .vol-badge {
+            background: var(--win-red); color: white; font-size: 10px;
+            font-weight: 700; padding: 1px 6px; border-radius: 10px;
+            min-width: 18px; text-align: center; display: none;
+            margin-left: auto;
+        }
+        .volume-check-item .vol-badge.has-count { display: inline-block; }
+
+        /* ===== VOLUME ISSUE SECTIONS ===== */
         .volume-section {
             border: 1px solid var(--win-border); border-radius: 6px;
             margin-bottom: 10px; overflow: hidden;
+            display: none;
         }
+        .volume-section.visible { display: block; }
         .volume-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 16px; background: var(--win-light); cursor: pointer;
+            padding: 10px 16px; background: var(--win-light);
             border-bottom: 1px solid var(--win-border); user-select: none;
-            transition: background 0.15s;
         }
-        .volume-header:hover { background: #eee; }
         .volume-header .vol-title {
-            font-family: 'Oswald', sans-serif; font-size: 16px;
+            font-family: 'Oswald', sans-serif; font-size: 15px;
             font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .volume-header .vol-badge {
@@ -381,14 +412,9 @@
             min-width: 22px; text-align: center; display: none;
         }
         .volume-header .vol-badge.has-count { display: inline-block; }
-        .volume-header .vol-arrow {
-            font-size: 14px; transition: transform 0.2s; color: var(--win-gray);
-        }
-        .volume-section.expanded .vol-arrow { transform: rotate(180deg); }
         .volume-body {
-            display: none; padding: 12px 16px;
+            padding: 12px 16px;
         }
-        .volume-section.expanded .volume-body { display: block; }
         .volume-controls {
             display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;
         }
@@ -519,11 +545,13 @@
         @media (max-width: 768px) {
             .form-row, .package-selector, .digital-options, .sig-row { grid-template-columns: 1fr; }
             .issues-grid { grid-template-columns: repeat(3, 1fr); }
+            .volume-checklist { grid-template-columns: repeat(2, 1fr); }
             header { flex-direction: column; text-align: center; }
             header .right-info { text-align: center; margin-top: 8px; }
         }
         @media (max-width: 480px) {
             .issues-grid { grid-template-columns: repeat(2, 1fr); }
+            .volume-checklist { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -645,7 +673,8 @@
             <!-- ISSUES (Volume Accordion) -->
             <div class="form-section">
                 <h2>Issue Selection</h2>
-                <div id="volumes-container"></div>
+                <div id="volume-checklist"></div>
+                <div id="volume-issues-container"></div>
                 <div class="customize-toggle">
                     <input type="checkbox" id="customize-sizes" onchange="toggleCustomize()">
                     <label for="customize-sizes">Customize ad sizes per issue</label>
@@ -661,7 +690,7 @@
                             <input type="checkbox" id="web-banner" onchange="toggleDigitalCard('banner-card', this.checked); recalculate();">
                             <div>
                                 <div class="card-title">Website Banner Ad</div>
-                                <div class="card-price">$<input type="number" id="banner-price-input" value="2600" min="0" step="100" style="width:70px;padding:2px 6px;border:1px solid var(--win-border);border-radius:3px;font-size:13px;font-family:'Source Sans Pro',sans-serif;" onchange="STATE.bannerPrice=parseInt(this.value)||2600;recalculate()" oninput="STATE.bannerPrice=parseInt(this.value)||2600;recalculate()">/year — Nov to Oct</div>
+                                <div class="card-price">$<input type="number" id="banner-price-input" value="2600" min="0" step="100" style="width:70px;padding:2px 6px;border:1px solid var(--win-border);border-radius:3px;font-size:13px;font-family:'Source Sans Pro',sans-serif;" onchange="STATE.bannerPrice=parseInt(this.value)||2600;recalculate()" oninput="STATE.bannerPrice=parseInt(this.value)||2600;recalculate()">/year</div>
                             </div>
                         </div>
                         <div class="card-detail">Full year banner on WIN-magazine.com</div>
@@ -691,9 +720,15 @@
                         <div class="card-detail">4 total weeks = $1,800 block rate</div>
                     </div>
                 </div>
-                <div class="form-group" style="margin-top: 14px;">
-                    <label for="banner-period">Week or Banner Period (if applicable)</label>
-                    <input type="text" id="banner-period" placeholder="e.g., Nov 2025 - Oct 2026">
+                <div class="form-row" style="margin-top: 14px;">
+                    <div class="form-group">
+                        <label for="banner-start-date">Banner Start Date</label>
+                        <input type="date" id="banner-start-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="banner-end-date">Banner End Date</label>
+                        <input type="date" id="banner-end-date">
+                    </div>
                 </div>
             </div>
 
@@ -871,7 +906,7 @@ var STATE = {
 // ============================================================
 function init() {
     buildStartVolumeDropdown();
-    buildVolumeAccordion();
+    buildVolumeSelector();
     detectNextIssue();
     setTodayDate();
     recalculate();
@@ -907,33 +942,52 @@ function detectNextIssue() {
     }, 50);
 }
 
-function buildVolumeAccordion() {
-    var container = document.getElementById('volumes-container');
+function buildVolumeSelector() {
+    var checklist = document.getElementById('volume-checklist');
+    var issuesContainer = document.getElementById('volume-issues-container');
     var defaultSize = document.getElementById('default-size').value;
-    container.innerHTML = '';
+    checklist.innerHTML = '';
+    issuesContainer.innerHTML = '';
+
+    // Build checklist grid
+    checklist.className = 'volume-checklist';
     VOLUMES.forEach(function(vol) {
+        var isChecked = !!STATE.expandedVolumes[vol.num];
+        var count = getVolumeSelectionCount(vol.num);
+        var item = document.createElement('label');
+        item.className = 'volume-check-item' + (isChecked ? ' checked' : '');
+        item.id = 'vol-check-item-' + vol.num;
+        var badgeClass = count > 0 ? 'vol-badge has-count' : 'vol-badge';
+        item.innerHTML =
+            '<input type="checkbox" id="vol-check-' + vol.num + '" ' + (isChecked ? 'checked' : '') +
+            ' onchange="toggleVolumeCheck(' + vol.num + ')">' +
+            '<span class="vol-check-label">' + vol.label + '</span>' +
+            '<span class="' + badgeClass + '" id="vol-badge-' + vol.num + '">' + count + '</span>';
+        checklist.appendChild(item);
+    });
+
+    // Build issue sections (hidden by default, shown when checkbox is checked)
+    VOLUMES.forEach(function(vol) {
+        var isChecked = !!STATE.expandedVolumes[vol.num];
         var section = document.createElement('div');
-        section.className = 'volume-section' + (STATE.expandedVolumes[vol.num] ? ' expanded' : '');
+        section.className = 'volume-section' + (isChecked ? ' visible' : '');
         section.id = 'vol-section-' + vol.num;
         var count = getVolumeSelectionCount(vol.num);
         var badgeClass = count > 0 ? 'vol-badge has-count' : 'vol-badge';
         section.innerHTML =
-            '<div class="volume-header" onclick="toggleVolume(' + vol.num + ')">' +
+            '<div class="volume-header">' +
                 '<span class="vol-title">' + vol.label + '</span>' +
-                '<span style="display:flex;align-items:center;gap:8px;">' +
-                    '<span class="' + badgeClass + '" id="vol-badge-' + vol.num + '">' + count + '</span>' +
-                    '<span class="vol-arrow">\u25BC</span>' +
-                '</span>' +
+                '<span class="' + badgeClass + '" id="vol-section-badge-' + vol.num + '">' + count + '</span>' +
             '</div>' +
             '<div class="volume-body">' +
                 '<div class="volume-controls">' +
-                    '<button type="button" onclick="event.stopPropagation();selectAllVolume(' + vol.num + ')">Select All</button>' +
-                    '<button type="button" onclick="event.stopPropagation();selectEveryOtherVolume(' + vol.num + ')">Every Other</button>' +
-                    '<button type="button" onclick="event.stopPropagation();clearVolume(' + vol.num + ')">Clear All</button>' +
+                    '<button type="button" onclick="selectAllVolume(' + vol.num + ')">Select All</button>' +
+                    '<button type="button" onclick="selectEveryOtherVolume(' + vol.num + ')">Every Other</button>' +
+                    '<button type="button" onclick="clearVolume(' + vol.num + ')">Clear All</button>' +
                 '</div>' +
                 '<div class="issues-grid" id="issues-grid-' + vol.num + '"></div>' +
             '</div>';
-        container.appendChild(section);
+        issuesContainer.appendChild(section);
         var grid = document.getElementById('issues-grid-' + vol.num);
         ISSUE_TEMPLATE.forEach(function(issue, idx) {
             var compositeId = 'v' + vol.num + '-' + idx;
@@ -961,10 +1015,27 @@ function buildVolumeAccordion() {
 // ============================================================
 //  VOLUME & ISSUE SELECTION
 // ============================================================
-function toggleVolume(volNum) {
+function toggleVolumeCheck(volNum) {
+    var checkbox = document.getElementById('vol-check-' + volNum);
     var section = document.getElementById('vol-section-' + volNum);
-    section.classList.toggle('expanded');
-    STATE.expandedVolumes[volNum] = section.classList.contains('expanded');
+    var checkItem = document.getElementById('vol-check-item-' + volNum);
+    var isChecked = checkbox.checked;
+    if (isChecked) {
+        section.classList.add('visible');
+        checkItem.classList.add('checked');
+        STATE.expandedVolumes[volNum] = true;
+    } else {
+        section.classList.remove('visible');
+        checkItem.classList.remove('checked');
+        STATE.expandedVolumes[volNum] = false;
+        // Remove all selected issues for this volume
+        ISSUE_TEMPLATE.forEach(function(issue, idx) {
+            delete STATE.selectedIssues['v' + volNum + '-' + idx];
+        });
+        syncStateToDOM();
+        recalculate();
+        saveDraft();
+    }
 }
 
 function getVolumeSelectionCount(volNum) {
@@ -977,11 +1048,19 @@ function getVolumeSelectionCount(volNum) {
 
 function updateVolumeBadges() {
     VOLUMES.forEach(function(vol) {
-        var badge = document.getElementById('vol-badge-' + vol.num);
-        if (!badge) return;
         var count = getVolumeSelectionCount(vol.num);
-        badge.textContent = count;
-        badge.className = count > 0 ? 'vol-badge has-count' : 'vol-badge';
+        // Update checklist badge
+        var checkBadge = document.getElementById('vol-badge-' + vol.num);
+        if (checkBadge) {
+            checkBadge.textContent = count;
+            checkBadge.className = count > 0 ? 'vol-badge has-count' : 'vol-badge';
+        }
+        // Update section header badge
+        var sectionBadge = document.getElementById('vol-section-badge-' + vol.num);
+        if (sectionBadge) {
+            sectionBadge.textContent = count;
+            sectionBadge.className = count > 0 ? 'vol-badge has-count' : 'vol-badge';
+        }
     });
 }
 
@@ -1053,13 +1132,12 @@ function selectIssuesFromStart(count) {
         selected++; issueIdx++;
         if (issueIdx >= 12) { issueIdx = 0; volIdx++; }
     }
-    syncStateToDOM();
+    // Auto-check the relevant volume checkboxes and show those sections
     Object.keys(STATE.selectedIssues).forEach(function(key) {
         var vNum = STATE.selectedIssues[key].volume;
         STATE.expandedVolumes[vNum] = true;
-        var section = document.getElementById('vol-section-' + vNum);
-        if (section) section.classList.add('expanded');
     });
+    syncStateToDOM();
 }
 
 function syncStateToDOM() {
@@ -1076,6 +1154,21 @@ function syncStateToDOM() {
                 card.classList.remove('selected');
             }
         });
+        // Sync volume checkboxes
+        var checkbox = document.getElementById('vol-check-' + vol.num);
+        var checkItem = document.getElementById('vol-check-item-' + vol.num);
+        var section = document.getElementById('vol-section-' + vol.num);
+        if (checkbox && checkItem && section) {
+            var isChecked = !!STATE.expandedVolumes[vol.num];
+            checkbox.checked = isChecked;
+            if (isChecked) {
+                checkItem.classList.add('checked');
+                section.classList.add('visible');
+            } else {
+                checkItem.classList.remove('checked');
+                section.classList.remove('visible');
+            }
+        }
     });
     updateVolumeBadges();
 }
@@ -1700,7 +1793,13 @@ function generatePDF() {
         doc.setFontSize(8);
 
         if (hasBanner) {
-            doc.text('Website Banner (Annual, Nov-Oct)', m + 1, y);
+            var pdfBannerStart = document.getElementById('banner-start-date').value;
+            var pdfBannerEnd = document.getElementById('banner-end-date').value;
+            var bannerDesc = 'Website Banner (Annual)';
+            if (pdfBannerStart && pdfBannerEnd) {
+                bannerDesc = 'Website Banner (' + new Date(pdfBannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',year:'numeric'}) + ' \u2013 ' + new Date(pdfBannerEnd + 'T00:00:00').toLocaleDateString('en-US', {month:'short',year:'numeric'}) + ')';
+            }
+            doc.text(bannerDesc, m + 1, y);
             doc.text('$' + STATE.bannerPrice.toLocaleString(), rightCol - 2, y, { align: 'right' });
             y += 4;
         }
@@ -1728,10 +1827,19 @@ function generatePDF() {
                 y += 4;
             }
         }
-        var bannerPeriod = document.getElementById('banner-period').value;
-        if (bannerPeriod) {
+        var bannerStart = document.getElementById('banner-start-date').value;
+        var bannerEnd = document.getElementById('banner-end-date').value;
+        if (bannerStart || bannerEnd) {
             doc.setFontSize(7);
-            doc.text('Period: ' + bannerPeriod, m + 1, y);
+            var periodStr = 'Period: ';
+            if (bannerStart && bannerEnd) {
+                periodStr += new Date(bannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + ' \u2013 ' + new Date(bannerEnd + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+            } else if (bannerStart) {
+                periodStr += 'Starting ' + new Date(bannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+            } else {
+                periodStr += 'Ending ' + new Date(bannerEnd + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+            }
+            doc.text(periodStr, m + 1, y);
             y += 4;
         }
         y += 1;
@@ -1964,7 +2072,8 @@ function sendToGina() {
             emailAds: document.getElementById('email-ads').checked,
             emailInSeason: STATE.emailInSeason,
             emailOffSeason: STATE.emailOffSeason,
-            bannerPeriod: document.getElementById('banner-period').value,
+            bannerStartDate: document.getElementById('banner-start-date').value,
+            bannerEndDate: document.getElementById('banner-end-date').value,
             designNeeded: document.getElementById('opt-design').checked,
             ncaaAd: document.getElementById('opt-ncaa').checked,
             prepayDiscount: document.getElementById('prepay-discount').checked,
@@ -2059,7 +2168,8 @@ function saveDraft() {
                 emailInSeason: document.getElementById('email-in-season').value,
                 emailOffSeason: document.getElementById('email-off-season').value,
                 bannerPrice: document.getElementById('banner-price-input').value,
-                bannerPeriod: document.getElementById('banner-period').value,
+                bannerStartDate: document.getElementById('banner-start-date').value,
+                bannerEndDate: document.getElementById('banner-end-date').value,
                 optDesign: document.getElementById('opt-design').checked,
                 optNcaa: document.getElementById('opt-ncaa').checked,
                 prepayDiscount: document.getElementById('prepay-discount').checked,
@@ -2129,7 +2239,8 @@ function restoreDraft() {
         document.getElementById('email-in-season').value = f.emailInSeason || '0';
         document.getElementById('email-off-season').value = f.emailOffSeason || '0';
         document.getElementById('banner-price-input').value = f.bannerPrice || '2600';
-        document.getElementById('banner-period').value = f.bannerPeriod || '';
+        document.getElementById('banner-start-date').value = f.bannerStartDate || '';
+        document.getElementById('banner-end-date').value = f.bannerEndDate || '';
         document.getElementById('opt-design').checked = f.optDesign || false;
         document.getElementById('opt-ncaa').checked = f.optNcaa || false;
         document.getElementById('prepay-discount').checked = f.prepayDiscount || false;
@@ -2151,16 +2262,11 @@ function restoreDraft() {
         }
 
         // Rebuild accordion and sync
-        buildVolumeAccordion();
+        buildVolumeSelector();
         syncStateToDOM();
 
-        // Expand volumes that have selections
-        Object.keys(STATE.expandedVolumes).forEach(function(vn) {
-            if (STATE.expandedVolumes[vn]) {
-                var section = document.getElementById('vol-section-' + vn);
-                if (section) section.classList.add('expanded');
-            }
-        });
+        // Sync volume checkboxes and show checked volume sections
+        syncStateToDOM();
 
         recalculate();
         attachAutoSave();
@@ -2197,7 +2303,7 @@ function resetForm() {
     document.getElementById('signed-by').value = 'Bryan';
     document.getElementById('banner-price-input').value = '2600';
     localStorage.removeItem(DRAFT_KEY);
-    buildVolumeAccordion();
+    buildVolumeSelector();
     setTodayDate();
     detectNextIssue();
     recalculate();
