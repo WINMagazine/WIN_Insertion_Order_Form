@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WIN Magazine - Volume 32 Insertion Order</title>
+    <title>WIN Magazine - Insertion Order</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
@@ -359,6 +359,162 @@
         .status-message.error { display: block; background: #f8d7da; color: #721c24; }
         .status-message.info { display: block; background: #d1ecf1; color: #0c5460; }
 
+        /* ===== VOLUME ACCORDION ===== */
+        .volume-section {
+            border: 1px solid var(--win-border); border-radius: 6px;
+            margin-bottom: 10px; overflow: hidden;
+        }
+        .volume-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; background: var(--win-light); cursor: pointer;
+            border-bottom: 1px solid var(--win-border); user-select: none;
+            transition: background 0.15s;
+        }
+        .volume-header:hover { background: #eee; }
+        .volume-header .vol-title {
+            font-family: 'Oswald', sans-serif; font-size: 16px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .volume-header .vol-badge {
+            background: var(--win-red); color: white; font-size: 11px;
+            font-weight: 700; padding: 2px 8px; border-radius: 10px;
+            min-width: 22px; text-align: center; display: none;
+        }
+        .volume-header .vol-badge.has-count { display: inline-block; }
+        .volume-header .vol-arrow {
+            font-size: 14px; transition: transform 0.2s; color: var(--win-gray);
+        }
+        .volume-section.expanded .vol-arrow { transform: rotate(180deg); }
+        .volume-body {
+            display: none; padding: 12px 16px;
+        }
+        .volume-section.expanded .volume-body { display: block; }
+        .volume-controls {
+            display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;
+        }
+        .volume-controls button {
+            padding: 4px 10px; border: 1px solid var(--win-border);
+            border-radius: 3px; background: var(--win-white); font-size: 12px;
+            cursor: pointer; font-family: 'Source Sans Pro', sans-serif;
+            transition: all 0.15s;
+        }
+        .volume-controls button:hover {
+            background: var(--win-red); color: white; border-color: var(--win-red);
+        }
+
+        /* ===== PDF PREVIEW MODAL ===== */
+        .pdf-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
+        .pdf-modal-overlay.visible { display: flex; }
+        .pdf-modal-frame {
+            width: 90%; max-width: 800px; height: 75vh;
+            background: white; border-radius: 8px; overflow: hidden;
+        }
+        .pdf-modal-frame iframe {
+            width: 100%; height: 100%; border: none;
+        }
+        .pdf-modal-actions {
+            display: flex; gap: 16px; margin-top: 16px;
+        }
+        .pdf-modal-actions button {
+            padding: 14px 36px; font-size: 16px; font-weight: 700;
+            font-family: 'Oswald', sans-serif; text-transform: uppercase;
+            letter-spacing: 1px; border: none; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .pdf-modal-actions .btn-back {
+            background: var(--win-border); color: var(--win-black);
+        }
+        .pdf-modal-actions .btn-back:hover { background: #bbb; }
+        .pdf-modal-actions .btn-send {
+            background: var(--win-green); color: white;
+        }
+        .pdf-modal-actions .btn-send:hover { background: #236b3e; }
+
+        /* ===== TIER COMPARISON PANEL ===== */
+        .tier-panel {
+            background: var(--win-white); border: 1px solid var(--win-border);
+            border-radius: 8px; margin-bottom: 20px; overflow: hidden;
+        }
+        .tier-panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 18px; cursor: pointer; background: var(--win-light);
+            border-bottom: 1px solid var(--win-border); user-select: none;
+        }
+        .tier-panel-header:hover { background: #eee; }
+        .tier-panel-header h2 {
+            font-family: 'Oswald', sans-serif; font-size: 16px;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: var(--win-red); margin: 0; border: none; padding: 0;
+        }
+        .tier-panel-body { display: none; padding: 16px 18px; }
+        .tier-panel.expanded .tier-panel-body { display: block; }
+        .tier-table {
+            width: 100%; border-collapse: collapse; font-size: 13px;
+        }
+        .tier-table th {
+            text-align: left; padding: 6px 10px; background: var(--win-light);
+            font-weight: 700; font-size: 12px; text-transform: uppercase;
+            letter-spacing: 0.5px; color: var(--win-gray);
+            border-bottom: 2px solid var(--win-border);
+        }
+        .tier-table td {
+            padding: 8px 10px; border-bottom: 1px solid var(--win-border);
+        }
+        .tier-table tr.active-tier {
+            background: #fef2f4; border-left: 3px solid var(--win-red);
+        }
+        .tier-table tr.active-tier td:first-child { font-weight: 700; color: var(--win-red); }
+
+        /* ===== DRAFT RESTORE MODAL ===== */
+        .draft-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 10001;
+            display: none; align-items: center; justify-content: center;
+        }
+        .draft-modal-overlay.visible { display: flex; }
+        .draft-modal {
+            background: white; padding: 30px 36px; border-radius: 8px;
+            text-align: center; max-width: 420px; width: 90%;
+            border-top: 5px solid var(--win-red);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .draft-modal h3 {
+            font-family: 'Oswald', sans-serif; font-size: 20px;
+            text-transform: uppercase; margin-bottom: 10px;
+        }
+        .draft-modal p { color: var(--win-gray); margin-bottom: 20px; font-size: 14px; }
+        .draft-modal-btns { display: flex; gap: 12px; justify-content: center; }
+        .draft-modal-btns button {
+            padding: 10px 28px; font-size: 14px; font-weight: 700;
+            font-family: 'Oswald', sans-serif; text-transform: uppercase;
+            border: none; border-radius: 6px; cursor: pointer;
+        }
+        .draft-modal-btns .btn-yes { background: var(--win-red); color: white; }
+        .draft-modal-btns .btn-no { background: var(--win-border); color: var(--win-black); }
+
+        /* ===== EMAIL SEASON INPUTS ===== */
+        .email-season-row {
+            display: flex; gap: 14px; align-items: center; margin-top: 10px; flex-wrap: wrap;
+        }
+        .email-season-group {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .email-season-group label { font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .email-season-group input {
+            width: 55px; padding: 5px; border: 1px solid var(--win-border);
+            border-radius: 4px; text-align: center; font-size: 13px;
+        }
+        .email-block-note {
+            font-size: 12px; color: var(--win-green); font-weight: 700;
+            margin-top: 6px; display: none;
+        }
+        .email-block-note.visible { display: block; }
+
         /* Responsive */
         @media (max-width: 768px) {
             .form-row, .package-selector, .digital-options, .sig-row { grid-template-columns: 1fr; }
@@ -376,8 +532,8 @@
     <div class="login-overlay" id="login-overlay">
         <div class="login-box">
             <h2>WIN Magazine</h2>
-            <p>Volume 32 Insertion Order System</p>
-            <input type="password" id="login-password" placeholder="Enter PIN" 
+            <p>Insertion Order System</p>
+            <input type="password" id="login-password" placeholder="Enter PIN"
                    onkeydown="if(event.key==='Enter')checkPassword()">
             <button onclick="checkPassword()">Access Form</button>
             <div class="login-error" id="login-error">Incorrect PIN. Try again.</div>
@@ -389,8 +545,8 @@
     <div class="container">
         <header>
             <div>
-                <h1>WIN Volume 32 2025-2026 Insertion Order</h1>
-                <div class="subtitle">3-Year Fixed-Price Renewal Option</div>
+                <h1>WIN Magazine Insertion Order</h1>
+                <div class="subtitle">Volumes 32–42 | 3-Year Fixed-Price Renewal Option</div>
             </div>
             <div class="right-info">
                 WIN Magazine<br>
@@ -461,34 +617,35 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="start-issue">Start Issue</label>
-                    <select id="start-issue" onchange="onPackageChange()">
-                        <option value="0">Oct (A) — Preview</option>
-                        <option value="1">Oct (B)</option>
-                        <option value="2">Nov</option>
-                        <option value="3">Dec</option>
-                        <option value="4">Jan</option>
-                        <option value="5">Mar</option>
-                        <option value="6">Apr (A)</option>
-                        <option value="7">Apr (B)</option>
-                        <option value="8">May</option>
-                        <option value="9">July</option>
-                        <option value="10">Aug</option>
-                        <option value="11">Sept</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start-volume">Start Volume</label>
+                        <select id="start-volume" onchange="onPackageChange()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="start-issue">Start Issue</label>
+                        <select id="start-issue" onchange="onPackageChange()">
+                            <option value="0">Oct (A) — Preview</option>
+                            <option value="1">Oct (B)</option>
+                            <option value="2">Nov</option>
+                            <option value="3">Dec</option>
+                            <option value="4">Jan</option>
+                            <option value="5">Mar</option>
+                            <option value="6">Apr (A)</option>
+                            <option value="7">Apr (B)</option>
+                            <option value="8">May</option>
+                            <option value="9">July</option>
+                            <option value="10">Aug</option>
+                            <option value="11">Sept</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- ISSUES -->
+            <!-- ISSUES (Volume Accordion) -->
             <div class="form-section">
                 <h2>Issue Selection</h2>
-                <div class="issue-controls">
-                    <button type="button" onclick="selectAllIssues()">Select All</button>
-                    <button type="button" onclick="selectEveryOther()">Every Other</button>
-                    <button type="button" onclick="clearAllIssues()">Clear All</button>
-                </div>
-                <div class="issues-grid" id="issues-grid"></div>
+                <div id="volumes-container"></div>
                 <div class="customize-toggle">
                     <input type="checkbox" id="customize-sizes" onchange="toggleCustomize()">
                     <label for="customize-sizes">Customize ad sizes per issue</label>
@@ -504,7 +661,7 @@
                             <input type="checkbox" id="web-banner" onchange="toggleDigitalCard('banner-card', this.checked); recalculate();">
                             <div>
                                 <div class="card-title">Website Banner Ad</div>
-                                <div class="card-price">$2,600/year ($250/month) — Nov to Oct</div>
+                                <div class="card-price">$<input type="number" id="banner-price-input" value="2600" min="0" step="100" style="width:70px;padding:2px 6px;border:1px solid var(--win-border);border-radius:3px;font-size:13px;font-family:'Source Sans Pro',sans-serif;" onchange="STATE.bannerPrice=parseInt(this.value)||2600;recalculate()" oninput="STATE.bannerPrice=parseInt(this.value)||2600;recalculate()">/year — Nov to Oct</div>
                             </div>
                         </div>
                         <div class="card-detail">Full year banner on WIN-magazine.com</div>
@@ -514,15 +671,24 @@
                             <input type="checkbox" id="email-ads" onchange="toggleDigitalCard('email-card', this.checked); recalculate();">
                             <div>
                                 <div class="card-title">Weekly Email Newsletter Ads</div>
-                                <div class="card-price">$500/wk In-Season · $400/wk Off-Season (May-Aug)</div>
+                                <div class="card-price">$500/wk In-Season (Sep–Apr) · $400/wk Off-Season (May–Aug)</div>
                             </div>
                         </div>
-                        <div class="email-qty-row" style="display:none" id="email-qty-row">
-                            <label>Qty (weeks):</label>
-                            <input type="number" id="email-qty" min="0" value="0" onchange="recalculate()" oninput="recalculate()">
+                        <div class="email-season-row" style="display:none" id="email-qty-row">
+                            <div class="email-season-group">
+                                <label>In-Season (Sep–Apr):</label>
+                                <input type="number" id="email-in-season" min="0" value="0" onchange="recalculate()" oninput="recalculate()">
+                                <span style="font-size:12px;color:var(--win-gray);">wks × $500</span>
+                            </div>
+                            <div class="email-season-group">
+                                <label>Off-Season (May–Aug):</label>
+                                <input type="number" id="email-off-season" min="0" value="0" onchange="recalculate()" oninput="recalculate()">
+                                <span style="font-size:12px;color:var(--win-gray);">wks × $400</span>
+                            </div>
                             <span>= <span class="qty-total" id="email-total">$0</span></span>
                         </div>
-                        <div class="card-detail">$1,800 for 4-week block</div>
+                        <div class="email-block-note" id="email-block-note">4-week block rate: $1,800 applied!</div>
+                        <div class="card-detail">4 total weeks = $1,800 block rate</div>
                     </div>
                 </div>
                 <div class="form-group" style="margin-top: 14px;">
@@ -560,6 +726,15 @@
                     <label for="notes">Premium Placement / Misc. Notes</label>
                     <textarea id="notes" rows="3" placeholder="Notes or special terms..."></textarea>
                 </div>
+            </div>
+
+            <!-- TIER COMPARISON -->
+            <div class="tier-panel" id="tier-panel">
+                <div class="tier-panel-header" onclick="document.getElementById('tier-panel').classList.toggle('expanded')">
+                    <h2>Package Rate Comparison</h2>
+                    <span class="vol-arrow">▼</span>
+                </div>
+                <div class="tier-panel-body" id="tier-panel-body"></div>
             </div>
 
             <!-- TOTALS -->
@@ -604,7 +779,7 @@
             <!-- SUBMIT -->
             <div class="submit-section">
                 <button type="button" class="submit-section btn-reset" onclick="resetForm()">Reset</button>
-                <button type="button" class="submit-section btn-submit" id="submit-btn" onclick="submitForm()">Generate PDF & Send</button>
+                <button type="button" class="submit-section btn-submit" id="submit-btn" onclick="submitForm()">Generate PDF</button>
                 <div class="status-message" id="status-msg"></div>
             </div>
 
@@ -612,16 +787,42 @@
     </div>
     </div>
 
+    <!-- PDF PREVIEW MODAL -->
+    <div class="pdf-modal-overlay" id="pdf-modal">
+        <div class="pdf-modal-frame">
+            <iframe id="pdf-iframe"></iframe>
+        </div>
+        <div class="pdf-modal-actions">
+            <button class="btn-back" onclick="closePdfModal()">Go Back & Edit</button>
+            <button class="btn-send" id="btn-send-gina" onclick="sendToGina()">Send to Gina</button>
+        </div>
+    </div>
+
+    <!-- DRAFT RESTORE MODAL -->
+    <div class="draft-modal-overlay" id="draft-modal">
+        <div class="draft-modal">
+            <h3>Continue Draft?</h3>
+            <p id="draft-modal-text">You have an unsaved draft. Continue editing?</p>
+            <div class="draft-modal-btns">
+                <button class="btn-yes" onclick="restoreDraft()">Yes, Continue</button>
+                <button class="btn-no" onclick="clearDraftAndInit()">No, Start Fresh</button>
+            </div>
+        </div>
+    </div>
+
 <script>
 // ============================================================
 //  CONFIG
 // ============================================================
-var WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL_HERE';
+// n8n webhook — replace with your production webhook URL after creating the workflow
+// Expected format: https://peyton.app.n8n.cloud/webhook/win-insertion-order
+var WEBHOOK_URL = 'https://peyton.app.n8n.cloud/webhook/win-insertion-order';
+var DRAFT_KEY = 'win_io_draft_v2';
 
 // ============================================================
 //  PRICING DATA
 // ============================================================
-var ISSUES = [
+var ISSUE_TEMPLATE = [
     { id: 'oct-a', name: 'Oct (A)', num: 1, isPreview: true,  month: 10, label: 'Preview' },
     { id: 'oct-b', name: 'Oct (B)', num: 2, isPreview: false, month: 10, label: '' },
     { id: 'nov',   name: 'Nov',     num: 3, isPreview: false, month: 11, label: '' },
@@ -636,36 +837,45 @@ var ISSUES = [
     { id: 'sept',  name: 'Sept',    num: 12, isPreview: false, month: 9,  label: '' }
 ];
 
+var VOLUMES = [];
+for (var v = 32; v <= 42; v++) {
+    var startYear = 2025 + (v - 32);
+    VOLUMES.push({ num: v, label: 'Volume ' + v + ' (' + startYear + '\u2013' + (startYear + 1) + ')' });
+}
+
 var SIZES = ['full','half','third','quarter','eighth'];
 var SIZE_LABELS = { full: 'Full Page', half: '1/2 Page', third: '1/3 Page', quarter: '1/4 Page', eighth: '1/8 Page' };
 
-// Single insertion rates (non-preview)
 var SINGLE_RATE = { full: 1224, half: 675, third: 505, quarter: 369, eighth: 227 };
-// October Preview single rates
 var PREVIEW_RATE = { full: 2595, half: 1428, third: 963, quarter: 737, eighth: 442 };
-// 5-Issue package rate per issue
 var FIVE_RATE = { full: 979, half: 540, third: 404, quarter: 295, eighth: 182 };
-// 12-Issue annual rate per month
 var ANNUAL_RATE = { full: 1032, half: 569, third: 417, quarter: 307, eighth: 188 };
-
-// Combo monthly rates (all-in: magazine + email included)
 var COMBO_ANNUAL = { full: 1187, half: 723, third: 572, quarter: 461, eighth: 342 };
 var COMBO_6MO = { full: 1278, half: 820, third: 678, quarter: 564, eighth: 446 };
 var COMBO_3MO = { full: 1410, half: 917, third: 763, quarter: 641, eighth: 376 };
 
 // ============================================================
-//  STATE
+//  GLOBAL STATE
 // ============================================================
-var customizeSizes = false;
+var STATE = {
+    selectedIssues: {},
+    customizeSizes: false,
+    expandedVolumes: { 32: true },
+    bannerPrice: 2600,
+    emailInSeason: 0,
+    emailOffSeason: 0
+};
 
 // ============================================================
 //  INIT
 // ============================================================
 function init() {
-    buildIssueGrid();
+    buildStartVolumeDropdown();
+    buildVolumeAccordion();
     detectNextIssue();
     setTodayDate();
     recalculate();
+    attachAutoSave();
 }
 
 function setTodayDate() {
@@ -673,128 +883,230 @@ function setTodayDate() {
     document.getElementById('sign-date').value = today;
 }
 
+function buildStartVolumeDropdown() {
+    var sel = document.getElementById('start-volume');
+    sel.innerHTML = '';
+    VOLUMES.forEach(function(v) {
+        var opt = document.createElement('option');
+        opt.value = v.num;
+        opt.textContent = v.label;
+        sel.appendChild(opt);
+    });
+    sel.value = 32;
+}
+
 function detectNextIssue() {
     var now = new Date();
-    var currentMonth = now.getMonth() + 1; // 1-12
-    // Map current month to next upcoming issue index
-    var monthToIssue = {
-        1: 5,   // Jan → Mar
-        2: 5,   // Feb → Mar
-        3: 6,   // Mar → Apr(A)
-        4: 8,   // Apr → May
-        5: 9,   // May → July
-        6: 9,   // Jun → July
-        7: 10,  // Jul → Aug
-        8: 11,  // Aug → Sept
-        9: 0,   // Sep → Oct(A)
-        10: 2,  // Oct → Nov
-        11: 3,  // Nov → Dec
-        12: 4   // Dec → Jan
-    };
+    var currentMonth = now.getMonth() + 1;
+    var monthToIssue = { 1:5, 2:5, 3:6, 4:8, 5:9, 6:9, 7:10, 8:11, 9:0, 10:2, 11:3, 12:4 };
     var nextIdx = monthToIssue[currentMonth] || 0;
     document.getElementById('start-issue').value = nextIdx;
-    // Mark the next issue card
     setTimeout(function() {
-        var cards = document.querySelectorAll('.issue-card');
-        cards.forEach(function(c, i) {
-            if (i === nextIdx) c.classList.add('next-issue');
-        });
+        var card = document.getElementById('card-v32-' + nextIdx);
+        if (card) card.classList.add('next-issue');
     }, 50);
 }
 
-function buildIssueGrid() {
-    var grid = document.getElementById('issues-grid');
+function buildVolumeAccordion() {
+    var container = document.getElementById('volumes-container');
     var defaultSize = document.getElementById('default-size').value;
-    grid.innerHTML = '';
-    ISSUES.forEach(function(issue, idx) {
-        var card = document.createElement('div');
-        card.className = 'issue-card';
-        card.setAttribute('data-idx', idx);
-        card.onclick = function(e) {
-            if (e.target.tagName === 'SELECT') return;
-            toggleIssue(idx);
-        };
-
-        var previewBadge = issue.isPreview ? '<div class="issue-preview-badge">PREVIEW</div>' : '';
-        var sizeOptions = SIZES.map(function(s) {
-            var sel = s === defaultSize ? ' selected' : '';
-            return '<option value="' + s + '"' + sel + '>' + SIZE_LABELS[s] + '</option>';
-        }).join('');
-
-        card.innerHTML =
-            previewBadge +
-            '<div class="issue-num">' + issue.num + '</div>' +
-            '<div class="issue-name">' + issue.name + '</div>' +
-            '<div class="issue-price" id="price-' + idx + '">—</div>' +
-            '<select id="size-' + idx + '" onchange="recalculate()">' + sizeOptions + '</select>';
-
-        grid.appendChild(card);
+    container.innerHTML = '';
+    VOLUMES.forEach(function(vol) {
+        var section = document.createElement('div');
+        section.className = 'volume-section' + (STATE.expandedVolumes[vol.num] ? ' expanded' : '');
+        section.id = 'vol-section-' + vol.num;
+        var count = getVolumeSelectionCount(vol.num);
+        var badgeClass = count > 0 ? 'vol-badge has-count' : 'vol-badge';
+        section.innerHTML =
+            '<div class="volume-header" onclick="toggleVolume(' + vol.num + ')">' +
+                '<span class="vol-title">' + vol.label + '</span>' +
+                '<span style="display:flex;align-items:center;gap:8px;">' +
+                    '<span class="' + badgeClass + '" id="vol-badge-' + vol.num + '">' + count + '</span>' +
+                    '<span class="vol-arrow">\u25BC</span>' +
+                '</span>' +
+            '</div>' +
+            '<div class="volume-body">' +
+                '<div class="volume-controls">' +
+                    '<button type="button" onclick="event.stopPropagation();selectAllVolume(' + vol.num + ')">Select All</button>' +
+                    '<button type="button" onclick="event.stopPropagation();selectEveryOtherVolume(' + vol.num + ')">Every Other</button>' +
+                    '<button type="button" onclick="event.stopPropagation();clearVolume(' + vol.num + ')">Clear All</button>' +
+                '</div>' +
+                '<div class="issues-grid" id="issues-grid-' + vol.num + '"></div>' +
+            '</div>';
+        container.appendChild(section);
+        var grid = document.getElementById('issues-grid-' + vol.num);
+        ISSUE_TEMPLATE.forEach(function(issue, idx) {
+            var compositeId = 'v' + vol.num + '-' + idx;
+            var card = document.createElement('div');
+            card.className = 'issue-card';
+            card.id = 'card-' + compositeId;
+            card.setAttribute('data-vol', vol.num);
+            card.setAttribute('data-idx', idx);
+            card.onclick = function(e) { if (e.target.tagName === 'SELECT') return; toggleIssue(vol.num, idx); };
+            var previewBadge = issue.isPreview ? '<div class="issue-preview-badge">PREVIEW</div>' : '';
+            var sizeOptions = SIZES.map(function(s) {
+                var sel = s === defaultSize ? ' selected' : '';
+                return '<option value="' + s + '"' + sel + '>' + SIZE_LABELS[s] + '</option>';
+            }).join('');
+            card.innerHTML = previewBadge +
+                '<div class="issue-num">' + issue.num + '</div>' +
+                '<div class="issue-name">' + issue.name + '</div>' +
+                '<div class="issue-price" id="price-' + compositeId + '">\u2014</div>' +
+                '<select id="size-' + compositeId + '" onchange="onIssueSizeChange(\'' + compositeId + '\');recalculate()">' + sizeOptions + '</select>';
+            grid.appendChild(card);
+        });
     });
 }
 
 // ============================================================
-//  ISSUE SELECTION
+//  VOLUME & ISSUE SELECTION
 // ============================================================
-function toggleIssue(idx) {
-    var card = document.querySelectorAll('.issue-card')[idx];
-    card.classList.toggle('selected');
-    recalculate();
+function toggleVolume(volNum) {
+    var section = document.getElementById('vol-section-' + volNum);
+    section.classList.toggle('expanded');
+    STATE.expandedVolumes[volNum] = section.classList.contains('expanded');
 }
 
-function selectAllIssues() {
-    document.querySelectorAll('.issue-card').forEach(function(c) { c.classList.add('selected'); });
-    recalculate();
-}
-
-function selectEveryOther() {
-    document.querySelectorAll('.issue-card').forEach(function(c, i) {
-        if (i % 2 === 0) c.classList.add('selected');
-        else c.classList.remove('selected');
+function getVolumeSelectionCount(volNum) {
+    var count = 0;
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        if (STATE.selectedIssues[key].volume === volNum) count++;
     });
-    recalculate();
+    return count;
+}
+
+function updateVolumeBadges() {
+    VOLUMES.forEach(function(vol) {
+        var badge = document.getElementById('vol-badge-' + vol.num);
+        if (!badge) return;
+        var count = getVolumeSelectionCount(vol.num);
+        badge.textContent = count;
+        badge.className = count > 0 ? 'vol-badge has-count' : 'vol-badge';
+    });
+}
+
+function toggleIssue(volNum, idx) {
+    var key = 'v' + volNum + '-' + idx;
+    var card = document.getElementById('card-' + key);
+    if (STATE.selectedIssues[key]) {
+        delete STATE.selectedIssues[key];
+        card.classList.remove('selected');
+    } else {
+        var size = document.getElementById('size-' + key).value;
+        STATE.selectedIssues[key] = { volume: volNum, issueIdx: idx, size: size };
+        card.classList.add('selected');
+    }
+    updateVolumeBadges(); recalculate(); saveDraft();
+}
+
+function onIssueSizeChange(compositeId) {
+    if (STATE.selectedIssues[compositeId]) {
+        STATE.selectedIssues[compositeId].size = document.getElementById('size-' + compositeId).value;
+    }
+    saveDraft();
+}
+
+function selectAllVolume(volNum) {
+    var defaultSize = document.getElementById('default-size').value;
+    ISSUE_TEMPLATE.forEach(function(issue, idx) {
+        var key = 'v' + volNum + '-' + idx;
+        var size = STATE.customizeSizes && STATE.selectedIssues[key] ? STATE.selectedIssues[key].size : defaultSize;
+        STATE.selectedIssues[key] = { volume: volNum, issueIdx: idx, size: size };
+    });
+    syncStateToDOM(); recalculate(); saveDraft();
+}
+
+function selectEveryOtherVolume(volNum) {
+    var defaultSize = document.getElementById('default-size').value;
+    ISSUE_TEMPLATE.forEach(function(issue, idx) {
+        var key = 'v' + volNum + '-' + idx;
+        if (idx % 2 === 0) {
+            var size = STATE.customizeSizes && STATE.selectedIssues[key] ? STATE.selectedIssues[key].size : defaultSize;
+            STATE.selectedIssues[key] = { volume: volNum, issueIdx: idx, size: size };
+        } else { delete STATE.selectedIssues[key]; }
+    });
+    syncStateToDOM(); recalculate(); saveDraft();
+}
+
+function clearVolume(volNum) {
+    ISSUE_TEMPLATE.forEach(function(issue, idx) { delete STATE.selectedIssues['v' + volNum + '-' + idx]; });
+    syncStateToDOM(); recalculate(); saveDraft();
 }
 
 function clearAllIssues() {
-    document.querySelectorAll('.issue-card').forEach(function(c) { c.classList.remove('selected'); });
-    recalculate();
+    STATE.selectedIssues = {};
+    syncStateToDOM(); recalculate(); saveDraft();
 }
 
 function selectIssuesFromStart(count) {
+    var startVol = parseInt(document.getElementById('start-volume').value);
     var startIdx = parseInt(document.getElementById('start-issue').value);
-    var cards = document.querySelectorAll('.issue-card');
-    // Clear all
-    cards.forEach(function(c) { c.classList.remove('selected'); });
-    // Select 'count' issues starting from startIdx, wrapping around
-    for (var i = 0; i < count && i < 12; i++) {
-        var idx = (startIdx + i) % 12;
-        cards[idx].classList.add('selected');
+    var defaultSize = document.getElementById('default-size').value;
+    STATE.selectedIssues = {};
+    var volIdx = VOLUMES.findIndex(function(v) { return v.num === startVol; });
+    var issueIdx = startIdx;
+    var selected = 0;
+    while (selected < count && volIdx < VOLUMES.length) {
+        var vol = VOLUMES[volIdx];
+        var key = 'v' + vol.num + '-' + issueIdx;
+        STATE.selectedIssues[key] = { volume: vol.num, issueIdx: issueIdx, size: defaultSize };
+        selected++; issueIdx++;
+        if (issueIdx >= 12) { issueIdx = 0; volIdx++; }
     }
+    syncStateToDOM();
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        var vNum = STATE.selectedIssues[key].volume;
+        STATE.expandedVolumes[vNum] = true;
+        var section = document.getElementById('vol-section-' + vNum);
+        if (section) section.classList.add('expanded');
+    });
+}
+
+function syncStateToDOM() {
+    VOLUMES.forEach(function(vol) {
+        ISSUE_TEMPLATE.forEach(function(issue, idx) {
+            var key = 'v' + vol.num + '-' + idx;
+            var card = document.getElementById('card-' + key);
+            if (!card) return;
+            var sizeEl = document.getElementById('size-' + key);
+            if (STATE.selectedIssues[key]) {
+                card.classList.add('selected');
+                sizeEl.value = STATE.selectedIssues[key].size;
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+    });
+    updateVolumeBadges();
 }
 
 function toggleCustomize() {
-    customizeSizes = document.getElementById('customize-sizes').checked;
-    var cards = document.querySelectorAll('.issue-card');
-    cards.forEach(function(c) {
-        var sel = c.querySelector('select');
-        if (customizeSizes && c.classList.contains('selected')) {
-            sel.style.display = 'block';
-        } else if (!customizeSizes) {
-            sel.style.display = c.classList.contains('selected') ? 'block' : 'none';
-            // Reset to default when un-customizing
-            sel.value = document.getElementById('default-size').value;
-        }
-    });
-    recalculate();
+    STATE.customizeSizes = document.getElementById('customize-sizes').checked;
+    var defaultSize = document.getElementById('default-size').value;
+    if (!STATE.customizeSizes) {
+        Object.keys(STATE.selectedIssues).forEach(function(key) {
+            STATE.selectedIssues[key].size = defaultSize;
+            var sizeEl = document.getElementById('size-' + key);
+            if (sizeEl) sizeEl.value = defaultSize;
+        });
+    }
+    syncStateToDOM(); recalculate(); saveDraft();
 }
 
 function onDefaultSizeChange() {
     var def = document.getElementById('default-size').value;
-    if (!customizeSizes) {
-        document.querySelectorAll('.issue-card select').forEach(function(sel) {
-            sel.value = def;
+    if (!STATE.customizeSizes) {
+        Object.keys(STATE.selectedIssues).forEach(function(key) {
+            STATE.selectedIssues[key].size = def;
+        });
+        VOLUMES.forEach(function(vol) {
+            ISSUE_TEMPLATE.forEach(function(issue, idx) {
+                var sizeEl = document.getElementById('size-v' + vol.num + '-' + idx);
+                if (sizeEl) sizeEl.value = def;
+            });
         });
     }
-    recalculate();
+    recalculate(); updateTierComparison(); saveDraft();
 }
 
 // ============================================================
@@ -802,59 +1114,40 @@ function onDefaultSizeChange() {
 // ============================================================
 function onPackageChange() {
     var pkg = document.getElementById('package-type').value;
-    var emailCard = document.getElementById('email-card');
     var emailCheck = document.getElementById('email-ads');
     var emailQtyRow = document.getElementById('email-qty-row');
-    var emailQty = document.getElementById('email-qty');
+    var emailIn = document.getElementById('email-in-season');
+    var emailOff = document.getElementById('email-off-season');
 
     if (pkg === 'emailOnly') {
         clearAllIssues();
         emailCheck.checked = true;
         toggleDigitalCard('email-card', true);
         emailQtyRow.style.display = 'flex';
-        recalculate();
-        return;
+        recalculate(); saveDraft(); return;
     }
 
-    // Auto-select issues based on package
     switch (pkg) {
-        case '5issue':
-            selectIssuesFromStart(5);
-            break;
-        case 'annual':
-        case 'comboA':
-            selectIssuesFromStart(12);
-            break;
-        case 'combo6':
-            selectIssuesFromStart(6);
-            break;
-        case 'combo3':
-            selectIssuesFromStart(3);
-            break;
-        default:
-            // custom: don't change selections
-            break;
+        case '5issue': selectIssuesFromStart(5); break;
+        case 'annual': case 'comboA': selectIssuesFromStart(12); break;
+        case 'combo6': selectIssuesFromStart(6); break;
+        case 'combo3': selectIssuesFromStart(3); break;
     }
 
-    // Auto-set email quantities for combos
     if (pkg === 'comboA') {
-        emailCheck.checked = true;
-        toggleDigitalCard('email-card', true);
+        emailCheck.checked = true; toggleDigitalCard('email-card', true);
         emailQtyRow.style.display = 'flex';
-        emailQty.value = 4;
+        emailIn.value = 4; emailOff.value = 0; STATE.emailInSeason = 4; STATE.emailOffSeason = 0;
     } else if (pkg === 'combo6') {
-        emailCheck.checked = true;
-        toggleDigitalCard('email-card', true);
+        emailCheck.checked = true; toggleDigitalCard('email-card', true);
         emailQtyRow.style.display = 'flex';
-        emailQty.value = 3;
+        emailIn.value = 3; emailOff.value = 0; STATE.emailInSeason = 3; STATE.emailOffSeason = 0;
     } else if (pkg === 'combo3') {
-        emailCheck.checked = true;
-        toggleDigitalCard('email-card', true);
+        emailCheck.checked = true; toggleDigitalCard('email-card', true);
         emailQtyRow.style.display = 'flex';
-        emailQty.value = 2;
+        emailIn.value = 2; emailOff.value = 0; STATE.emailInSeason = 2; STATE.emailOffSeason = 0;
     }
-
-    recalculate();
+    recalculate(); saveDraft();
 }
 
 // ============================================================
@@ -866,7 +1159,11 @@ function toggleDigitalCard(cardId, checked) {
     else card.classList.remove('selected');
     if (cardId === 'email-card') {
         document.getElementById('email-qty-row').style.display = checked ? 'flex' : 'none';
-        if (!checked) document.getElementById('email-qty').value = 0;
+        if (!checked) {
+            document.getElementById('email-in-season').value = 0;
+            document.getElementById('email-off-season').value = 0;
+            STATE.emailInSeason = 0; STATE.emailOffSeason = 0;
+        }
     }
 }
 
@@ -879,51 +1176,44 @@ function addDiscount() {
     row.className = 'discount-row';
     row.innerHTML =
         '<input type="text" placeholder="Discount description...">' +
-        '<input type="number" placeholder="-$ amount" step="0.01"  oninput="recalculate()">' +
-        '<button type="button" class="remove-btn" onclick="this.parentElement.remove(); recalculate();">&times;</button>';
+        '<input type="number" placeholder="-$ amount" step="0.01" oninput="recalculate();saveDraft()">' +
+        '<button type="button" class="remove-btn" onclick="this.parentElement.remove();recalculate();saveDraft();">&times;</button>';
     container.appendChild(row);
 }
 
 // ============================================================
 //  PRICING ENGINE
 // ============================================================
+function getEmailTotalWeeks() {
+    var inS = parseInt(document.getElementById('email-in-season').value) || 0;
+    var offS = parseInt(document.getElementById('email-off-season').value) || 0;
+    STATE.emailInSeason = inS; STATE.emailOffSeason = offS;
+    return inS + offS;
+}
+
 function determineTier() {
     var pkg = document.getElementById('package-type').value;
-    var selectedCards = document.querySelectorAll('.issue-card.selected');
-    var issueCount = selectedCards.length;
+    var issueCount = Object.keys(STATE.selectedIssues).length;
     var hasPreview = false;
-    selectedCards.forEach(function(c) {
-        var idx = parseInt(c.getAttribute('data-idx'));
-        if (ISSUES[idx].isPreview) hasPreview = true;
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        if (ISSUE_TEMPLATE[STATE.selectedIssues[key].issueIdx].isPreview) hasPreview = true;
     });
     var nonPreviewCount = hasPreview ? issueCount - 1 : issueCount;
-    var emailQty = parseInt(document.getElementById('email-qty').value) || 0;
+    var emailQty = getEmailTotalWeeks();
     var emailChecked = document.getElementById('email-ads').checked;
 
-    // If a specific package is selected, honor it
     if (pkg === 'comboA') return { tier: 'comboA', label: 'Annual Combo', issueCount: issueCount };
     if (pkg === 'combo6') return { tier: 'combo6', label: '6-Month Combo', issueCount: issueCount };
     if (pkg === 'combo3') return { tier: 'combo3', label: '3-Month Combo', issueCount: issueCount };
     if (pkg === 'annual') return { tier: 'annual', label: '12-Issue Annual (23% Off)', issueCount: issueCount };
-    if (pkg === '5issue') return { tier: '5issue', label: '5-Issue Package (20% Off)', issueCount: issueCount };
+    if (pkg === '5issue') return { tier: '5issue', label: '5-Issue Print Package (20% Off)', issueCount: issueCount };
     if (pkg === 'emailOnly') return { tier: 'emailOnly', label: 'Email/Banner Only', issueCount: 0 };
 
-    // Dynamic detection for custom selections
-    if (issueCount === 12 && emailChecked && emailQty >= 4) {
-        return { tier: 'comboA', label: 'Annual Combo (Auto-Detected)', issueCount: issueCount };
-    }
-    if (issueCount >= 12) {
-        return { tier: 'annual', label: '12-Issue Annual (Auto-Detected)', issueCount: issueCount };
-    }
-    if (issueCount >= 6 && emailChecked && emailQty >= 3) {
-        return { tier: 'combo6', label: '6-Month Combo (Auto-Detected)', issueCount: issueCount };
-    }
-    if (nonPreviewCount >= 5 && (!emailChecked || emailQty < 2)) {
-        return { tier: '5issue', label: '5-Issue Package (Auto-Detected)', issueCount: issueCount };
-    }
-    if (issueCount >= 3 && emailChecked && emailQty >= 2) {
-        return { tier: 'combo3', label: '3-Month Combo (Auto-Detected)', issueCount: issueCount };
-    }
+    if (issueCount === 12 && emailChecked && emailQty >= 4) return { tier: 'comboA', label: 'Annual Combo (Auto-Detected)', issueCount: issueCount };
+    if (issueCount >= 12) return { tier: 'annual', label: '12-Issue Annual (Auto-Detected)', issueCount: issueCount };
+    if (issueCount >= 6 && emailChecked && emailQty >= 3) return { tier: 'combo6', label: '6-Month Combo (Auto-Detected)', issueCount: issueCount };
+    if (nonPreviewCount >= 5 && (!emailChecked || emailQty < 2)) return { tier: '5issue', label: '5-Issue Package (Auto-Detected)', issueCount: issueCount };
+    if (issueCount >= 3 && emailChecked && emailQty >= 2) return { tier: 'combo3', label: '3-Month Combo (Auto-Detected)', issueCount: issueCount };
     return { tier: 'single', label: 'Single Insertion', issueCount: issueCount };
 }
 
@@ -938,22 +1228,42 @@ function getRateForTier(tier) {
     }
 }
 
-function getIssuePrice(idx, tier) {
-    var issue = ISSUES[idx];
-    var size = document.getElementById('size-' + idx).value;
+function getIssuePriceFromState(key, tier) {
+    var info = STATE.selectedIssues[key];
+    if (!info) return 0;
+    var issue = ISSUE_TEMPLATE[info.issueIdx];
+    var size = info.size;
     var rate = getRateForTier(tier);
-
-    // For combo and annual tiers, preview is included at the tier rate
-    if (tier === 'comboA' || tier === 'annual') {
-        return rate[size];
-    }
-
-    // For other tiers, preview uses its own premium rate
-    if (issue.isPreview) {
-        return PREVIEW_RATE[size];
-    }
-
+    if (tier === 'comboA' || tier === 'annual') return rate[size];
+    if (issue.isPreview) return PREVIEW_RATE[size];
     return rate[size];
+}
+
+function calculateEmailTotal(isCombo, tier) {
+    var inSeason = parseInt(document.getElementById('email-in-season').value) || 0;
+    var offSeason = parseInt(document.getElementById('email-off-season').value) || 0;
+    var totalWeeks = inSeason + offSeason;
+    var blockNote = document.getElementById('email-block-note');
+
+    if (isCombo) {
+        var comboIncl = tier === 'comboA' ? 4 : (tier === 'combo6' ? 3 : 2);
+        var remainIn = Math.max(0, inSeason - comboIncl);
+        var remainCombo = Math.max(0, comboIncl - inSeason);
+        var remainOff = Math.max(0, offSeason - remainCombo);
+        var overage = remainIn * 500 + remainOff * 400;
+        document.getElementById('email-total').textContent = overage > 0 ? comboIncl + ' incl. + $' + overage.toLocaleString() + ' overage' : 'Included in combo';
+        blockNote.classList.remove('visible');
+        return overage;
+    }
+    if (totalWeeks === 4) {
+        blockNote.classList.add('visible');
+        document.getElementById('email-total').textContent = '$1,800';
+        return 1800;
+    }
+    blockNote.classList.remove('visible');
+    var total = inSeason * 500 + offSeason * 400;
+    document.getElementById('email-total').textContent = '$' + total.toLocaleString();
+    return total;
 }
 
 // ============================================================
@@ -962,84 +1272,50 @@ function getIssuePrice(idx, tier) {
 function recalculate() {
     var tierInfo = determineTier();
     var tier = tierInfo.tier;
-    var lines = [];
     var magazineTotal = 0;
+    var issueCount = Object.keys(STATE.selectedIssues).length;
 
-    // Calculate per-issue prices
-    var selectedCards = document.querySelectorAll('.issue-card.selected');
-    selectedCards.forEach(function(card) {
-        var idx = parseInt(card.getAttribute('data-idx'));
-        var price = getIssuePrice(idx, tier);
-        var size = document.getElementById('size-' + idx).value;
-        var issue = ISSUES[idx];
-
-        // Update card display
-        document.getElementById('price-' + idx).textContent = '$' + price.toLocaleString();
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        var price = getIssuePriceFromState(key, tier);
+        var priceEl = document.getElementById('price-' + key);
+        if (priceEl) priceEl.textContent = '$' + price.toLocaleString();
         magazineTotal += price;
+    });
 
-        var sizeLabel = customizeSizes ? ' (' + SIZE_LABELS[size] + ')' : '';
-        lines.push({
-            label: issue.name + sizeLabel + (issue.isPreview && tier !== 'comboA' && tier !== 'annual' ? ' (Preview)' : ''),
-            amount: price
+    VOLUMES.forEach(function(vol) {
+        ISSUE_TEMPLATE.forEach(function(issue, idx) {
+            var key = 'v' + vol.num + '-' + idx;
+            if (!STATE.selectedIssues[key]) {
+                var priceEl = document.getElementById('price-' + key);
+                if (priceEl) priceEl.textContent = '\u2014';
+            }
         });
     });
 
-    // Clear unselected prices
-    document.querySelectorAll('.issue-card:not(.selected)').forEach(function(card) {
-        var idx = parseInt(card.getAttribute('data-idx'));
-        document.getElementById('price-' + idx).textContent = '—';
-    });
-
-    // Email / banner pricing
-    var emailTotal = 0;
-    var bannerTotal = 0;
     var isCombo = tier === 'comboA' || tier === 'combo6' || tier === 'combo3';
+    var bannerTotal = 0;
+    var emailTotal = 0;
 
     if (document.getElementById('web-banner').checked) {
-        bannerTotal = 2600;
-        lines.push({ label: 'Website Banner (Annual)', amount: 2600 });
+        bannerTotal = STATE.bannerPrice;
     }
 
-    if (document.getElementById('email-ads').checked && !isCombo) {
-        var qty = parseInt(document.getElementById('email-qty').value) || 0;
-        if (qty === 4) {
-            emailTotal = 1800; // 4-week block
-        } else {
-            emailTotal = qty * 500; // Simplified: in-season rate
-        }
-        if (qty > 0) {
-            lines.push({ label: 'Email Newsletter Ads (' + qty + ' wks)', amount: emailTotal });
-        }
-        document.getElementById('email-total').textContent = '$' + emailTotal.toLocaleString();
-    } else if (isCombo) {
-        var comboIncl = tier === 'comboA' ? 4 : (tier === 'combo6' ? 3 : 2);
-        var comboQty = parseInt(document.getElementById('email-qty').value) || 0;
-        if (comboQty > comboIncl) {
-            emailTotal = (comboQty - comboIncl) * 500;
-            document.getElementById('email-total').textContent = comboIncl + ' incl. + $' + emailTotal.toLocaleString() + ' overage';
-        } else {
-            document.getElementById('email-total').textContent = 'Included in combo';
-            emailTotal = 0;
-        }
+    if (document.getElementById('email-ads').checked) {
+        emailTotal = calculateEmailTotal(isCombo, tier);
     } else {
         document.getElementById('email-total').textContent = '$0';
+        document.getElementById('email-block-note').classList.remove('visible');
     }
 
-    if (tier === 'emailOnly') {
-        var qty2 = parseInt(document.getElementById('email-qty').value) || 0;
-        if (qty2 === 4) emailTotal = 1800;
-        else emailTotal = qty2 * 500;
-        if (qty2 > 0) lines.push({ label: 'Email Newsletter Ads (' + qty2 + ' wks)', amount: emailTotal });
-        document.getElementById('email-total').textContent = '$' + emailTotal.toLocaleString();
+    if (tier === 'emailOnly' && document.getElementById('email-ads').checked) {
+        emailTotal = calculateEmailTotal(false, tier);
     }
 
     var subtotal = magazineTotal + emailTotal + bannerTotal;
 
-    // Discounts
     var totalDiscounts = 0;
     var discountLines = [];
-    var discountRows = document.querySelectorAll('#discounts-container .discount-row');
-    discountRows.forEach(function(row) {
+    document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
         var desc = row.querySelector('input[type="text"]').value || 'Discount';
         var amt = parseFloat(row.querySelector('input[type="number"]').value) || 0;
         if (amt !== 0) {
@@ -1048,7 +1324,6 @@ function recalculate() {
         }
     });
 
-    // 7% prepay
     var prepayAmt = 0;
     if (document.getElementById('prepay-discount').checked) {
         prepayAmt = Math.round(subtotal * 0.07);
@@ -1061,44 +1336,40 @@ function recalculate() {
 
     var grandTotal = subtotal - totalDiscounts;
 
-    // Render totals
     var html = '';
     if (tierInfo.label && tier !== 'single' && tier !== 'emailOnly') {
         html += '<div class="total-line"><span class="label">Pricing Tier</span><span>' + cleanTierLabel(tierInfo.label) + '</span></div>';
     }
-
-    // Summarize magazine
-    if (selectedCards.length > 0) {
+    if (issueCount > 0) {
         var defaultSize = document.getElementById('default-size').value;
-        html += '<div class="total-line"><span class="label">' + selectedCards.length + ' Issues (' + SIZE_LABELS[defaultSize] + (customizeSizes ? ', customized' : '') + ')</span><span>$' + magazineTotal.toLocaleString() + '</span></div>';
+        html += '<div class="total-line"><span class="label">' + issueCount + ' Issues (' + SIZE_LABELS[defaultSize] + (STATE.customizeSizes ? ', customized' : '') + ')</span><span>$' + magazineTotal.toLocaleString() + '</span></div>';
     }
-
     if (bannerTotal > 0) {
         html += '<div class="total-line"><span class="label">Website Banner</span><span>$' + bannerTotal.toLocaleString() + '</span></div>';
     }
-    if (emailTotal > 0) {
+    if (emailTotal > 0 && !isCombo) {
         html += '<div class="total-line"><span class="label">Email Ads</span><span>$' + emailTotal.toLocaleString() + '</span></div>';
     }
     if (isCombo && document.getElementById('email-ads').checked) {
         var comboE2 = tier === 'comboA' ? 4 : (tier === 'combo6' ? 3 : 2);
-        html += '<div class="total-line"><span class="label">Email Ads (' + comboE2 + ' wks included in combo)</span><span>$0</span></div>';
+        if (emailTotal > 0) {
+            html += '<div class="total-line"><span class="label">Email Ads (' + comboE2 + ' incl. + overage)</span><span>$' + emailTotal.toLocaleString() + '</span></div>';
+        } else {
+            html += '<div class="total-line"><span class="label">Email Ads (' + comboE2 + ' wks included in combo)</span><span>$0</span></div>';
+        }
     }
 
     html += '<div class="total-line subtotal"><span class="label">Subtotal</span><span>$' + subtotal.toLocaleString() + '</span></div>';
-
     discountLines.forEach(function(d) {
         html += '<div class="total-line discount"><span class="label">' + d.label + '</span><span>-$' + Math.abs(d.amount).toLocaleString() + '</span></div>';
     });
-
     html += '<div class="total-line grand-total"><span class="label">Total</span><span>$' + grandTotal.toLocaleString() + '</span></div>';
 
-    if (selectedCards.length > 0) {
-        var perMonth = Math.round(grandTotal / selectedCards.length);
-        html += '<div class="total-line" style="opacity:0.6;font-size:13px;"><span class="label">≈ Per Month</span><span>$' + perMonth.toLocaleString() + '/mo</span></div>';
+    if (issueCount > 0) {
+        var perMonth = Math.round(grandTotal / issueCount);
+        html += '<div class="total-line" style="opacity:0.6;font-size:13px;"><span class="label">\u2248 Per Month</span><span>$' + perMonth.toLocaleString() + '/mo</span></div>';
     }
-
-    // Savings comparison
-    if (tier !== 'single' && tier !== 'emailOnly' && selectedCards.length > 0) {
+    if (tier !== 'single' && tier !== 'emailOnly' && issueCount > 0) {
         var singleTotal = calcSingleRateTotal();
         var savings = singleTotal - grandTotal;
         if (savings > 0) {
@@ -1107,6 +1378,7 @@ function recalculate() {
     }
 
     document.getElementById('totals-lines').innerHTML = html;
+    updateTierComparison();
 }
 
 // ============================================================
@@ -1123,33 +1395,67 @@ function cleanTierLabel(label) {
     return label.replace(/\s*\(Auto-Detected\)/g, '');
 }
 
-// Calculate what the order would cost at single insertion rates (for savings comparison)
 function calcSingleRateTotal() {
     var total = 0;
-    document.querySelectorAll('.issue-card.selected').forEach(function(card) {
-        var idx = parseInt(card.getAttribute('data-idx'));
-        var size = document.getElementById('size-' + idx).value;
-        var issue = ISSUES[idx];
-        if (issue.isPreview) {
-            total += PREVIEW_RATE[size];
-        } else {
-            total += SINGLE_RATE[size];
-        }
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        var info = STATE.selectedIssues[key];
+        var issue = ISSUE_TEMPLATE[info.issueIdx];
+        var size = info.size;
+        total += issue.isPreview ? PREVIEW_RATE[size] : SINGLE_RATE[size];
     });
-    // Add standalone email cost
     if (document.getElementById('email-ads').checked) {
-        var qty = parseInt(document.getElementById('email-qty').value) || 0;
-        total += qty * 500;
+        var inS = parseInt(document.getElementById('email-in-season').value) || 0;
+        var offS = parseInt(document.getElementById('email-off-season').value) || 0;
+        total += inS * 500 + offS * 400;
     }
-    // Add banner
     if (document.getElementById('web-banner').checked) {
-        total += 2600;
+        total += STATE.bannerPrice;
     }
     return total;
 }
 
+// Get volume range string from selected issues
+function getVolumeRange() {
+    var vols = {};
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        vols[STATE.selectedIssues[key].volume] = true;
+    });
+    var volNums = Object.keys(vols).map(Number).sort(function(a,b){return a-b;});
+    if (volNums.length === 0) return 'Volume 32';
+    if (volNums.length === 1) return 'Volume ' + volNums[0];
+    return 'Volumes ' + volNums[0] + '\u2013' + volNums[volNums.length - 1];
+}
+
 // ============================================================
-//  PDF GENERATION
+//  TIER COMPARISON PANEL
+// ============================================================
+function updateTierComparison() {
+    var size = document.getElementById('default-size').value;
+    var tierInfo = determineTier();
+    var currentTier = tierInfo.tier;
+    var tiers = [
+        { key: 'single', name: 'Single Issue', rate: SINGLE_RATE[size], per: '/issue' },
+        { key: '5issue', name: '5-Issue Package', rate: FIVE_RATE[size], per: '/issue' },
+        { key: 'annual', name: '12-Issue Annual', rate: ANNUAL_RATE[size], per: '/mo' },
+        { key: 'combo3', name: '3-Mo Combo', rate: COMBO_3MO[size], per: '/mo' },
+        { key: 'combo6', name: '6-Mo Combo', rate: COMBO_6MO[size], per: '/mo' },
+        { key: 'comboA', name: 'Annual Combo', rate: COMBO_ANNUAL[size], per: '/mo' }
+    ];
+    var singleRate = SINGLE_RATE[size];
+    var html = '<table class="tier-table"><thead><tr><th>Package</th><th>Rate (' + SIZE_LABELS[size] + ')</th><th>Savings vs Single</th></tr></thead><tbody>';
+    tiers.forEach(function(t) {
+        var isActive = t.key === currentTier;
+        var savings = singleRate - t.rate;
+        var savingsStr = savings > 0 ? ('$' + savings.toLocaleString() + t.per) : '\u2014';
+        var pct = savings > 0 ? ' (' + Math.round(savings / singleRate * 100) + '%)' : '';
+        html += '<tr class="' + (isActive ? 'active-tier' : '') + '"><td>' + t.name + '</td><td>$' + t.rate.toLocaleString() + t.per + '</td><td>' + savingsStr + pct + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('tier-panel-body').innerHTML = html;
+}
+
+// ============================================================
+//  PDF GENERATION (Multi-Volume)
 // ============================================================
 function generatePDF() {
     var jsPDF = window.jspdf.jsPDF;
@@ -1159,46 +1465,46 @@ function generatePDF() {
     var m = 14;
     var y = 0;
     var rightCol = pw - m;
+    var totalPages = 2; // will be updated for dynamic page count
 
-    // Shared footer
+    function checkPageBreak(neededHeight) {
+        if (y + neededHeight > ph - 20) {
+            addFooter(doc.internal.getNumberOfPages());
+            doc.addPage();
+            y = 14;
+            return true;
+        }
+        return false;
+    }
+
     function addFooter(pageNum) {
         doc.setFontSize(6.5);
         doc.setTextColor(150, 150, 150);
         doc.setFont('helvetica', 'normal');
         doc.text('WIN Magazine \u2022 PO Box 194 / Newton, IA 50208 \u2022 Gina@win-magazine.com \u2022 641-792-4436', pw / 2, ph - 7, { align: 'center' });
         doc.text('WIN Magazine reserves the right to refuse any ad copy.', pw / 2, ph - 4, { align: 'center' });
-        doc.text('Page ' + pageNum + ' of 2', pw - m, ph - 4, { align: 'right' });
     }
 
-    // Compact side-by-side signature block (WIN left, Advertiser right)
-    function addSignatures(startY, signedBy, advName) {
+    function addSignatures(startY, signedBy, advName, contactName) {
         var sy = startY;
         doc.setDrawColor(196, 30, 58);
         doc.setLineWidth(0.4);
         doc.line(m, sy, pw - m, sy);
         sy += 5;
-
         doc.setTextColor(0, 0, 0);
         var half = pw / 2 - 2;
-
-        // LEFT: WIN rep
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
         doc.text('WIN Magazine Representative:', m, sy);
-        // RIGHT: Advertiser rep
         doc.text('Company Representative (' + advName + '):', half + 6, sy);
         sy += 7;
-
         doc.setDrawColor(0, 0, 0);
         doc.setLineWidth(0.25);
-        // LEFT sig lines
         doc.line(m, sy, m + 62, sy);
         doc.line(m + 68, sy, half - 2, sy);
-        // RIGHT sig lines
         doc.line(half + 6, sy, half + 68, sy);
         doc.line(half + 74, sy, pw - m, sy);
         sy += 3.5;
-
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(6.5);
         doc.text('Signature', m, sy);
@@ -1206,14 +1512,12 @@ function generatePDF() {
         doc.text('Signature', half + 6, sy);
         doc.text('Date', half + 74, sy);
         sy += 3;
-
         doc.setFontSize(8);
         doc.setFont('helvetica', 'italic');
-        doc.text('Thanks Steve, ' + signedBy, m, sy);
+        doc.text('Thanks ' + contactName + ', ' + signedBy, m, sy);
         return sy + 2;
     }
 
-    // --- Get form values ---
     var rawAdvName = document.getElementById('advertiser-name').value || '';
     var rawContact = document.getElementById('contact-name').value || '';
     var advName = toTitleCase(rawAdvName) || '\u2014';
@@ -1225,12 +1529,21 @@ function generatePDF() {
     var orderDate = signDate || new Date().toISOString().slice(0, 10);
     var tierInfo = determineTier();
     var tierLabel = cleanTierLabel(tierInfo.label);
+    var volRange = getVolumeRange();
+    var volRangeYears = '';
+    var volNums = [];
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        var vn = STATE.selectedIssues[key].volume;
+        if (volNums.indexOf(vn) === -1) volNums.push(vn);
+    });
+    volNums.sort(function(a,b){return a-b;});
+    if (volNums.length > 0) {
+        var firstYear = 2025 + (volNums[0] - 32);
+        var lastYear = 2025 + (volNums[volNums.length-1] - 32) + 1;
+        volRangeYears = ' (' + firstYear + '\u2013' + lastYear + ')';
+    }
 
-    // ============================================
-    //  PAGE 1: INSERTION ORDER
-    // ============================================
-
-    // Header bar (compact - 20mm)
+    // PAGE 1 HEADER
     doc.setFillColor(26, 26, 26);
     doc.rect(0, 0, pw, 20, 'F');
     doc.setFillColor(196, 30, 58);
@@ -1238,17 +1551,16 @@ function generatePDF() {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
-    doc.text('WIN Volume 32 2025-2026 Insertion Order', m, 13);
+    doc.text('WIN Magazine Insertion Order \u2014 ' + volRange + volRangeYears, m, 13);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text('3-Year Fixed-Price Renewal Option', pw - m, 9, { align: 'right' });
     doc.text('PO Box 194 / Newton, IA 50208 / P: 641-792-4436', pw - m, 14, { align: 'right' });
     y = 27;
 
-    // Advertiser info (3 compact lines)
+    // Advertiser info
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
-
     doc.setFont('helvetica', 'bold');
     doc.text('Advertiser:', m, y);
     doc.setFont('helvetica', 'normal');
@@ -1258,7 +1570,6 @@ function generatePDF() {
     doc.setFont('helvetica', 'normal');
     doc.text(acctNum, pw / 2 + 27, y);
     y += 5;
-
     doc.setFont('helvetica', 'bold');
     doc.text('Contact:', m, y);
     doc.setFont('helvetica', 'normal');
@@ -1268,7 +1579,6 @@ function generatePDF() {
     doc.setFont('helvetica', 'normal');
     doc.text(contactEmail, pw / 2 + 27, y);
     y += 5;
-
     doc.setFont('helvetica', 'bold');
     doc.text('Date:', m, y);
     doc.setFont('helvetica', 'normal');
@@ -1292,18 +1602,36 @@ function generatePDF() {
         }
     }
 
-    // Red divider
     y += 1;
     doc.setDrawColor(196, 30, 58);
     doc.setLineWidth(0.4);
     doc.line(m, y, pw - m, y);
     y += 4;
 
-    // Issue table
-    var selectedCards = document.querySelectorAll('.issue-card.selected');
+    // GROUP ISSUES BY VOLUME
+    var issuesByVolume = {};
     var magazineTotal = 0;
+    Object.keys(STATE.selectedIssues).forEach(function(key) {
+        var info = STATE.selectedIssues[key];
+        if (!issuesByVolume[info.volume]) issuesByVolume[info.volume] = [];
+        var price = getIssuePriceFromState(key, tierInfo.tier);
+        magazineTotal += price;
+        issuesByVolume[info.volume].push({
+            issueIdx: info.issueIdx,
+            issue: ISSUE_TEMPLATE[info.issueIdx],
+            size: info.size,
+            price: price
+        });
+    });
 
-    if (selectedCards.length > 0) {
+    // Sort issues within each volume by issue index
+    Object.keys(issuesByVolume).forEach(function(v) {
+        issuesByVolume[v].sort(function(a,b) { return a.issueIdx - b.issueIdx; });
+    });
+
+    var sortedVols = Object.keys(issuesByVolume).map(Number).sort(function(a,b){return a-b;});
+
+    if (sortedVols.length > 0) {
         // Table header
         doc.setFillColor(240, 240, 240);
         doc.rect(m, y - 3, pw - 2 * m, 5, 'F');
@@ -1316,20 +1644,29 @@ function generatePDF() {
         doc.text('Rate', rightCol - 2, y, { align: 'right' });
         y += 4.5;
 
-        selectedCards.forEach(function(card) {
-            var idx = parseInt(card.getAttribute('data-idx'));
-            var issue = ISSUES[idx];
-            var size = document.getElementById('size-' + idx).value;
-            var price = getIssuePrice(idx, tierInfo.tier);
-            magazineTotal += price;
+        sortedVols.forEach(function(volNum) {
+            var volLabel = VOLUMES.find(function(v){return v.num===volNum;}).label;
+            checkPageBreak(8);
+            // Volume header row
+            doc.setFillColor(230, 230, 230);
+            doc.rect(m, y - 3, pw - 2 * m, 5, 'F');
+            doc.setFontSize(7.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(80, 80, 80);
+            doc.text(volLabel, m + 1, y);
+            y += 5;
+            doc.setTextColor(0, 0, 0);
 
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8);
-            doc.text(String(issue.num), m + 1, y);
-            doc.text(issue.name + (issue.isPreview ? ' (Preview)' : ''), m + 10, y);
-            doc.text(SIZE_LABELS[size], m + 45, y);
-            doc.text('$' + price.toLocaleString(), rightCol - 2, y, { align: 'right' });
-            y += 4.2;
+            issuesByVolume[volNum].forEach(function(item) {
+                checkPageBreak(5);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.text(String(item.issue.num), m + 1, y);
+                doc.text(item.issue.name + (item.issue.isPreview ? ' (Preview)' : ''), m + 10, y);
+                doc.text(SIZE_LABELS[item.size], m + 45, y);
+                doc.text('$' + item.price.toLocaleString(), rightCol - 2, y, { align: 'right' });
+                y += 4.2;
+            });
         });
 
         // Magazine subtotal
@@ -1339,7 +1676,7 @@ function generatePDF() {
         y += 2.5;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(8);
-        doc.text('Magazine Total (' + selectedCards.length + ' issues)', m + 45, y);
+        doc.text('Magazine Total (' + Object.keys(STATE.selectedIssues).length + ' issues)', m + 45, y);
         doc.text('$' + magazineTotal.toLocaleString(), rightCol - 2, y, { align: 'right' });
         y += 5;
     }
@@ -1348,10 +1685,13 @@ function generatePDF() {
     var isCombo = tierInfo.tier === 'comboA' || tierInfo.tier === 'combo6' || tierInfo.tier === 'combo3';
     var hasBanner = document.getElementById('web-banner').checked;
     var hasEmail = document.getElementById('email-ads').checked;
-    var emailQty = parseInt(document.getElementById('email-qty').value) || 0;
+    var emailInS = parseInt(document.getElementById('email-in-season').value) || 0;
+    var emailOffS = parseInt(document.getElementById('email-off-season').value) || 0;
+    var emailQty = emailInS + emailOffS;
     var comboIncluded = tierInfo.tier === 'comboA' ? 4 : (tierInfo.tier === 'combo6' ? 3 : (tierInfo.tier === 'combo3' ? 2 : 0));
 
     if (hasBanner || hasEmail) {
+        checkPageBreak(20);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(8);
         doc.text('DIGITAL', m, y);
@@ -1361,7 +1701,7 @@ function generatePDF() {
 
         if (hasBanner) {
             doc.text('Website Banner (Annual, Nov-Oct)', m + 1, y);
-            doc.text('$2,600', rightCol - 2, y, { align: 'right' });
+            doc.text('$' + STATE.bannerPrice.toLocaleString(), rightCol - 2, y, { align: 'right' });
             y += 4;
         }
         if (hasEmail) {
@@ -1373,14 +1713,17 @@ function generatePDF() {
                 doc.text('Email Newsletter (' + comboIncluded + ' wks, included)', m + 1, y);
                 doc.text('Included', rightCol - 2, y, { align: 'right' });
                 y += 4;
-                var overageQty = emailQty - comboIncluded;
-                var overagePrice = overageQty * 500;
-                doc.text('Additional Email Ads (' + overageQty + ' wks @ $500)', m + 1, y);
+                var remainIn = Math.max(0, emailInS - comboIncluded);
+                var remainCombo = Math.max(0, comboIncluded - emailInS);
+                var remainOff = Math.max(0, emailOffS - remainCombo);
+                var overagePrice = remainIn * 500 + remainOff * 400;
+                doc.text('Additional Email Ads (overage)', m + 1, y);
                 doc.text('$' + overagePrice.toLocaleString(), rightCol - 2, y, { align: 'right' });
                 y += 4;
             } else if (emailQty > 0) {
-                var ePrice = emailQty === 4 ? 1800 : emailQty * 500;
-                doc.text('Email Newsletter (' + emailQty + ' wks)', m + 1, y);
+                var ePrice = emailQty === 4 ? 1800 : emailInS * 500 + emailOffS * 400;
+                var desc = emailInS > 0 && emailOffS > 0 ? emailInS + ' in-season + ' + emailOffS + ' off-season' : emailQty + ' wks';
+                doc.text('Email Newsletter (' + desc + ')', m + 1, y);
                 doc.text('$' + ePrice.toLocaleString(), rightCol - 2, y, { align: 'right' });
                 y += 4;
             }
@@ -1394,7 +1737,7 @@ function generatePDF() {
         y += 1;
     }
 
-    // Additional options (inline)
+    // Additional options
     var optDesign = document.getElementById('opt-design').checked;
     var optNcaa = document.getElementById('opt-ncaa').checked;
     if (optDesign || optNcaa) {
@@ -1407,7 +1750,7 @@ function generatePDF() {
         y += 4;
     }
 
-    // Notes (compact)
+    // Notes
     var notes = document.getElementById('notes').value;
     if (notes) {
         doc.setFont('helvetica', 'italic');
@@ -1417,26 +1760,26 @@ function generatePDF() {
         y += noteLines.length * 3.5 + 2;
     }
 
-    // ---- COMPACT TOTALS (right-aligned, no box) ----
-    var pdfMagTotal = magazineTotal;
-    var pdfBanner = hasBanner ? 2600 : 0;
+    // TOTALS
+    var pdfBanner = hasBanner ? STATE.bannerPrice : 0;
     var pdfEmail = 0;
     if (hasEmail) {
         if (isCombo && emailQty > comboIncluded) {
-            pdfEmail = (emailQty - comboIncluded) * 500;
+            var rIn = Math.max(0, emailInS - comboIncluded);
+            var rCombo = Math.max(0, comboIncluded - emailInS);
+            var rOff = Math.max(0, emailOffS - rCombo);
+            pdfEmail = rIn * 500 + rOff * 400;
         } else if (!isCombo) {
-            pdfEmail = emailQty === 4 ? 1800 : emailQty * 500;
+            pdfEmail = emailQty === 4 ? 1800 : emailInS * 500 + emailOffS * 400;
         }
         if (tierInfo.tier === 'emailOnly') {
-            pdfEmail = emailQty === 4 ? 1800 : emailQty * 500;
+            pdfEmail = emailQty === 4 ? 1800 : emailInS * 500 + emailOffS * 400;
         }
     }
-    var pdfSubtotal = pdfMagTotal + pdfBanner + pdfEmail;
+    var pdfSubtotal = magazineTotal + pdfBanner + pdfEmail;
 
-    // Collect discounts
     var pdfDiscountItems = [];
-    var discountRows2 = document.querySelectorAll('#discounts-container .discount-row');
-    discountRows2.forEach(function(row) {
+    document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
         var desc = row.querySelector('input[type="text"]').value || 'Discount';
         var amt = parseFloat(row.querySelector('input[type="number"]').value) || 0;
         if (amt !== 0) pdfDiscountItems.push({ label: desc, amount: Math.abs(amt) });
@@ -1450,23 +1793,21 @@ function generatePDF() {
     var singleRateTotal = calcSingleRateTotal();
     var savingsAmount = singleRateTotal - pdfGrandTotal;
 
-    // Draw totals section
+    checkPageBreak(35);
     y += 1;
     doc.setDrawColor(196, 30, 58);
     doc.setLineWidth(0.4);
     doc.line(m, y, pw - m, y);
     y += 4;
 
-    var totalsX = pw / 2 + 20; // right half
+    var totalsX = pw / 2 + 20;
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(0, 0, 0);
-
     doc.text('Subtotal:', totalsX, y);
     doc.text('$' + pdfSubtotal.toLocaleString(), rightCol - 2, y, { align: 'right' });
     y += 4;
 
-    // Itemized discounts
     pdfDiscountItems.forEach(function(d) {
         doc.setTextColor(45, 138, 78);
         doc.text(d.label + ':', totalsX, y);
@@ -1474,7 +1815,6 @@ function generatePDF() {
         y += 4;
     });
 
-    // Grand total
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.3);
     doc.line(totalsX, y - 1, rightCol, y - 1);
@@ -1484,13 +1824,13 @@ function generatePDF() {
     doc.setFontSize(11);
     doc.text('Total:', totalsX, y);
     doc.text('$' + pdfGrandTotal.toLocaleString(), rightCol - 2, y, { align: 'right' });
-
-    // Per month + savings as separate lines
     y += 4;
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
-    if (selectedCards.length > 0) {
-        var perMonth = Math.round(pdfGrandTotal / selectedCards.length);
+    var issueCount = Object.keys(STATE.selectedIssues).length;
+    if (issueCount > 0) {
+        var perMonth = Math.round(pdfGrandTotal / issueCount);
         doc.setTextColor(80, 80, 80);
         doc.text('~ $' + perMonth.toLocaleString() + '/month', rightCol - 2, y, { align: 'right' });
         y += 3.5;
@@ -1503,26 +1843,20 @@ function generatePDF() {
     }
     y += 1;
 
-    // Payment terms (compact, left side)
     doc.setTextColor(100, 100, 100);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
-    doc.text('NET 30. Finance charge 1.5%/mo on balances past 30 days. 3-Year Fixed-Price locks in V32 pricing.', m, y);
+    doc.text('NET 30. Finance charge 1.5%/mo on balances past 30 days. 3-Year Fixed-Price locks in current pricing.', m, y);
     y += 5;
 
     // PAGE 1 SIGNATURES
-    addSignatures(y, signedBy, advName);
-
-    // Page 1 footer
+    checkPageBreak(25);
+    addSignatures(y, signedBy, advName, contactName);
     addFooter(1);
 
-    // ============================================
-    //  PAGE 2: TERMS & CONDITIONS
-    // ============================================
+    // TERMS & CONDITIONS PAGE
     doc.addPage();
     y = 0;
-
-    // Header
     doc.setFillColor(26, 26, 26);
     doc.rect(0, 0, pw, 18, 'F');
     doc.setFillColor(196, 30, 58);
@@ -1547,7 +1881,7 @@ function generatePDF() {
         '4. PLACEMENT: WIN Magazine will make reasonable efforts to honor premium placement requests but does not guarantee specific positioning unless confirmed in writing.',
         '5. CONTENT: WIN Magazine reserves the right to refuse any advertising copy that it deems inappropriate, misleading, or not in keeping with the publication\'s standards.',
         '6. LIABILITY: WIN Magazine\'s liability for errors or omissions shall not exceed the cost of the ad space in which the error occurred. Claims must be made within 30 days of publication.',
-        '7. 3-YEAR FIXED PRICE: This insertion order locks in current Volume 32 pricing for up to three (3) consecutive publication years, provided the advertiser maintains continuous participation. Pricing reverts to current rates if participation lapses.',
+        '7. 3-YEAR FIXED PRICE: This insertion order locks in current pricing for up to three (3) consecutive publication years, provided the advertiser maintains continuous participation. Pricing reverts to current rates if participation lapses.',
         '8. DIGITAL ADS: Website banner and email newsletter ad placements are subject to availability. Digital ad metrics and placement reports available upon request.',
         '9. INDEMNIFICATION: Advertiser agrees to indemnify and hold harmless WIN Magazine from any claims arising from the content of advertisements placed by the advertiser.',
         '10. ENTIRE AGREEMENT: This insertion order, together with these terms and conditions, constitutes the entire agreement between the parties.'
@@ -1559,60 +1893,65 @@ function generatePDF() {
         y += tLines.length * 4 + 2.5;
     });
 
-    // Acceptance text
     y += 3;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.text('By signing below, both parties agree to the insertion order and terms stated above.', m, y);
     y += 5;
 
-    // PAGE 2 SIGNATURES
-    addSignatures(y, signedBy, advName);
+    addSignatures(y, signedBy, advName, contactName);
+    addFooter(doc.internal.getNumberOfPages());
 
-    // Page 2 footer
-    addFooter(2);
+    // Add page numbers
+    var numPages = doc.internal.getNumberOfPages();
+    for (var i = 1; i <= numPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(6.5);
+        doc.setTextColor(150, 150, 150);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Page ' + i + ' of ' + numPages, pw - m, ph - 4, { align: 'right' });
+    }
 
     return doc;
 }
 
 // ============================================================
-//  SUBMIT
+//  PDF PREVIEW MODAL
 // ============================================================
-function submitForm() {
-    var advName = document.getElementById('advertiser-name').value;
-    if (!advName) {
-        alert('Please enter an advertiser name.');
-        return;
-    }
+var pendingDoc = null;
+var pendingFilename = '';
 
-    var btn = document.getElementById('submit-btn');
+function closePdfModal() {
+    document.getElementById('pdf-modal').classList.remove('visible');
+    document.getElementById('pdf-iframe').src = '';
+    pendingDoc = null;
+    pendingFilename = '';
+}
+
+function sendToGina() {
+    if (!pendingDoc) return;
+    var btn = document.getElementById('btn-send-gina');
     var statusEl = document.getElementById('status-msg');
-    btn.textContent = 'Generating...';
+    btn.textContent = 'Sending...';
     btn.disabled = true;
-    statusEl.className = 'status-message';
 
     try {
-        var doc = generatePDF();
-        var filename = 'WIN_IO_' + advName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + new Date().toISOString().slice(0, 10) + '.pdf';
-
-        // Download locally
-        doc.save(filename);
-
-        // Build payload
-        var pdfBase64 = doc.output('datauristring').split(',')[1];
+        pendingDoc.save(pendingFilename);
+        var pdfBase64 = pendingDoc.output('datauristring').split(',')[1];
         var tierInfo = determineTier();
         var selectedIssues = [];
-        document.querySelectorAll('.issue-card.selected').forEach(function(card) {
-            var idx = parseInt(card.getAttribute('data-idx'));
+        Object.keys(STATE.selectedIssues).forEach(function(key) {
+            var info = STATE.selectedIssues[key];
             selectedIssues.push({
-                issue: ISSUES[idx].name,
-                size: SIZE_LABELS[document.getElementById('size-' + idx).value],
-                price: getIssuePrice(idx, tierInfo.tier)
+                volume: info.volume,
+                issue: ISSUE_TEMPLATE[info.issueIdx].name,
+                size: SIZE_LABELS[info.size],
+                price: getIssuePriceFromState(key, tierInfo.tier)
             });
         });
 
         var payload = {
-            advertiser: advName,
+            advertiser: document.getElementById('advertiser-name').value,
             acctNumber: document.getElementById('acct-number').value,
             contact: document.getElementById('contact-name').value,
             email: document.getElementById('contact-email').value,
@@ -1621,8 +1960,10 @@ function submitForm() {
             defaultSize: SIZE_LABELS[document.getElementById('default-size').value],
             issues: selectedIssues,
             webBanner: document.getElementById('web-banner').checked,
+            bannerPrice: STATE.bannerPrice,
             emailAds: document.getElementById('email-ads').checked,
-            emailQty: parseInt(document.getElementById('email-qty').value) || 0,
+            emailInSeason: STATE.emailInSeason,
+            emailOffSeason: STATE.emailOffSeason,
             bannerPeriod: document.getElementById('banner-period').value,
             designNeeded: document.getElementById('opt-design').checked,
             ncaaAd: document.getElementById('opt-ncaa').checked,
@@ -1632,13 +1973,12 @@ function submitForm() {
             signDate: document.getElementById('sign-date').value,
             total: document.getElementById('totals-lines').querySelector('.grand-total') ?
                    document.getElementById('totals-lines').querySelector('.grand-total').lastChild.textContent : '$0',
-            filename: filename,
+            filename: pendingFilename,
             pdfBase64: pdfBase64,
             timestamp: new Date().toISOString()
         };
 
-        // Send to webhook
-        if (WEBHOOK_URL && WEBHOOK_URL !== 'YOUR_N8N_WEBHOOK_URL_HERE') {
+        if (WEBHOOK_URL) {
             fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1646,7 +1986,7 @@ function submitForm() {
             }).then(function(resp) {
                 if (resp.ok) {
                     statusEl.className = 'status-message success';
-                    statusEl.textContent = 'PDF generated & sent to Gina: ' + filename;
+                    statusEl.textContent = 'PDF generated & sent to Gina: ' + pendingFilename;
                 } else {
                     statusEl.className = 'status-message error';
                     statusEl.textContent = 'PDF downloaded but webhook failed (status ' + resp.status + '). Send manually.';
@@ -1655,18 +1995,186 @@ function submitForm() {
                 statusEl.className = 'status-message error';
                 statusEl.textContent = 'PDF downloaded but webhook error: ' + err.message + '. Send manually.';
             });
-        } else {
-            statusEl.className = 'status-message info';
-            statusEl.textContent = 'PDF downloaded: ' + filename + '. Configure webhook URL to enable auto-send.';
         }
+
+        localStorage.removeItem(DRAFT_KEY);
     } catch (error) {
-        console.error('PDF error:', error);
         statusEl.className = 'status-message error';
-        statusEl.textContent = 'Error generating PDF: ' + error.message;
+        statusEl.textContent = 'Error: ' + error.message;
     } finally {
-        btn.textContent = 'Generate PDF & Send';
+        closePdfModal();
+        btn.textContent = 'Send to Gina';
         btn.disabled = false;
     }
+}
+
+// ============================================================
+//  SUBMIT (Preview Flow)
+// ============================================================
+function submitForm() {
+    var advName = document.getElementById('advertiser-name').value;
+    if (!advName) { alert('Please enter an advertiser name.'); return; }
+
+    var btn = document.getElementById('submit-btn');
+    btn.textContent = 'Generating...';
+    btn.disabled = true;
+
+    try {
+        pendingDoc = generatePDF();
+        pendingFilename = 'WIN_IO_' + advName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + new Date().toISOString().slice(0, 10) + '.pdf';
+        var blobUrl = pendingDoc.output('bloburl');
+        document.getElementById('pdf-iframe').src = blobUrl;
+        document.getElementById('pdf-modal').classList.add('visible');
+    } catch (error) {
+        console.error('PDF error:', error);
+        document.getElementById('status-msg').className = 'status-message error';
+        document.getElementById('status-msg').textContent = 'Error generating PDF: ' + error.message;
+    } finally {
+        btn.textContent = 'Generate PDF';
+        btn.disabled = false;
+    }
+}
+
+// ============================================================
+//  DRAFT SAVING (localStorage)
+// ============================================================
+function saveDraft() {
+    try {
+        var draft = {
+            state: JSON.parse(JSON.stringify(STATE)),
+            fields: {
+                advertiserName: document.getElementById('advertiser-name').value,
+                acctNumber: document.getElementById('acct-number').value,
+                contactName: document.getElementById('contact-name').value,
+                contactEmail: document.getElementById('contact-email').value,
+                billingAddress: document.getElementById('billing-address').value,
+                newCustomer: document.getElementById('new-customer').checked,
+                packageType: document.getElementById('package-type').value,
+                defaultSize: document.getElementById('default-size').value,
+                startVolume: document.getElementById('start-volume').value,
+                startIssue: document.getElementById('start-issue').value,
+                customizeSizes: document.getElementById('customize-sizes').checked,
+                webBanner: document.getElementById('web-banner').checked,
+                emailAds: document.getElementById('email-ads').checked,
+                emailInSeason: document.getElementById('email-in-season').value,
+                emailOffSeason: document.getElementById('email-off-season').value,
+                bannerPrice: document.getElementById('banner-price-input').value,
+                bannerPeriod: document.getElementById('banner-period').value,
+                optDesign: document.getElementById('opt-design').checked,
+                optNcaa: document.getElementById('opt-ncaa').checked,
+                prepayDiscount: document.getElementById('prepay-discount').checked,
+                notes: document.getElementById('notes').value,
+                signedBy: document.getElementById('signed-by').value,
+                signDate: document.getElementById('sign-date').value
+            },
+            discounts: []
+        };
+        document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
+            draft.discounts.push({
+                desc: row.querySelector('input[type="text"]').value,
+                amt: row.querySelector('input[type="number"]').value
+            });
+        });
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch(e) { /* silent */ }
+}
+
+function attachAutoSave() {
+    var form = document.getElementById('io-form');
+    form.addEventListener('input', function() { saveDraft(); });
+    form.addEventListener('change', function() { saveDraft(); });
+}
+
+function hasDraft() {
+    try { return !!localStorage.getItem(DRAFT_KEY); } catch(e) { return false; }
+}
+
+function getDraftAdvertiserName() {
+    try {
+        var d = JSON.parse(localStorage.getItem(DRAFT_KEY));
+        return d && d.fields && d.fields.advertiserName ? d.fields.advertiserName : 'Unknown';
+    } catch(e) { return 'Unknown'; }
+}
+
+function restoreDraft() {
+    document.getElementById('draft-modal').classList.remove('visible');
+    try {
+        var draft = JSON.parse(localStorage.getItem(DRAFT_KEY));
+        if (!draft) { init(); return; }
+
+        // Restore STATE
+        STATE = draft.state;
+
+        // Restore form fields
+        var f = draft.fields;
+        document.getElementById('advertiser-name').value = f.advertiserName || '';
+        document.getElementById('acct-number').value = f.acctNumber || '';
+        document.getElementById('contact-name').value = f.contactName || '';
+        document.getElementById('contact-email').value = f.contactEmail || '';
+        document.getElementById('billing-address').value = f.billingAddress || '';
+        document.getElementById('new-customer').checked = f.newCustomer || false;
+        document.getElementById('billing-group').style.display = f.newCustomer ? 'block' : 'none';
+        document.getElementById('package-type').value = f.packageType || 'custom';
+        document.getElementById('default-size').value = f.defaultSize || 'full';
+        document.getElementById('start-volume').value = f.startVolume || '32';
+        document.getElementById('start-issue').value = f.startIssue || '0';
+        document.getElementById('customize-sizes').checked = f.customizeSizes || false;
+        document.getElementById('web-banner').checked = f.webBanner || false;
+        if (f.webBanner) document.getElementById('banner-card').classList.add('selected');
+        document.getElementById('email-ads').checked = f.emailAds || false;
+        if (f.emailAds) {
+            document.getElementById('email-card').classList.add('selected');
+            document.getElementById('email-qty-row').style.display = 'flex';
+        }
+        document.getElementById('email-in-season').value = f.emailInSeason || '0';
+        document.getElementById('email-off-season').value = f.emailOffSeason || '0';
+        document.getElementById('banner-price-input').value = f.bannerPrice || '2600';
+        document.getElementById('banner-period').value = f.bannerPeriod || '';
+        document.getElementById('opt-design').checked = f.optDesign || false;
+        document.getElementById('opt-ncaa').checked = f.optNcaa || false;
+        document.getElementById('prepay-discount').checked = f.prepayDiscount || false;
+        document.getElementById('notes').value = f.notes || '';
+        document.getElementById('signed-by').value = f.signedBy || 'Bryan';
+        document.getElementById('sign-date').value = f.signDate || new Date().toISOString().split('T')[0];
+
+        // Restore discounts
+        var container = document.getElementById('discounts-container');
+        container.innerHTML = '';
+        if (draft.discounts) {
+            draft.discounts.forEach(function(d) {
+                addDiscount();
+                var rows = container.querySelectorAll('.discount-row');
+                var lastRow = rows[rows.length - 1];
+                lastRow.querySelector('input[type="text"]').value = d.desc || '';
+                lastRow.querySelector('input[type="number"]').value = d.amt || '';
+            });
+        }
+
+        // Rebuild accordion and sync
+        buildVolumeAccordion();
+        syncStateToDOM();
+
+        // Expand volumes that have selections
+        Object.keys(STATE.expandedVolumes).forEach(function(vn) {
+            if (STATE.expandedVolumes[vn]) {
+                var section = document.getElementById('vol-section-' + vn);
+                if (section) section.classList.add('expanded');
+            }
+        });
+
+        recalculate();
+        attachAutoSave();
+    } catch(e) {
+        console.error('Draft restore error:', e);
+        localStorage.removeItem(DRAFT_KEY);
+        init();
+    }
+}
+
+function clearDraftAndInit() {
+    document.getElementById('draft-modal').classList.remove('visible');
+    localStorage.removeItem(DRAFT_KEY);
+    init();
 }
 
 // ============================================================
@@ -1676,12 +2184,20 @@ function resetForm() {
     if (!confirm('Clear all form data?')) return;
     document.getElementById('io-form').reset();
     document.getElementById('discounts-container').innerHTML = '';
-    document.querySelectorAll('.issue-card').forEach(function(c) { c.classList.remove('selected'); });
+    STATE.selectedIssues = {};
+    STATE.customizeSizes = false;
+    STATE.expandedVolumes = { 32: true };
+    STATE.bannerPrice = 2600;
+    STATE.emailInSeason = 0;
+    STATE.emailOffSeason = 0;
     document.getElementById('billing-group').style.display = 'none';
     document.getElementById('email-qty-row').style.display = 'none';
     document.getElementById('banner-card').classList.remove('selected');
     document.getElementById('email-card').classList.remove('selected');
     document.getElementById('signed-by').value = 'Bryan';
+    document.getElementById('banner-price-input').value = '2600';
+    localStorage.removeItem(DRAFT_KEY);
+    buildVolumeAccordion();
     setTodayDate();
     detectNextIssue();
     recalculate();
@@ -1695,7 +2211,13 @@ function checkPassword() {
     if (pw === 'pin2win3') {
         document.getElementById('login-overlay').classList.add('hidden');
         document.getElementById('main-content').classList.add('visible');
-        init();
+        if (hasDraft()) {
+            var advName = getDraftAdvertiserName();
+            document.getElementById('draft-modal-text').textContent = 'Continue draft for "' + advName + '"?';
+            document.getElementById('draft-modal').classList.add('visible');
+        } else {
+            init();
+        }
     } else {
         document.getElementById('login-error').style.display = 'block';
         document.getElementById('login-password').value = '';
