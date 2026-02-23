@@ -648,24 +648,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="start-volume">Start Volume</label>
-                        <select id="start-volume" onchange="onPackageChange()"></select>
+                        <select id="start-volume" onchange="buildStartIssueDropdown();onPackageChange()"></select>
                     </div>
                     <div class="form-group">
                         <label for="start-issue">Start Issue</label>
-                        <select id="start-issue" onchange="onPackageChange()">
-                            <option value="0">Oct (A) — Preview</option>
-                            <option value="1">Oct (B)</option>
-                            <option value="2">Nov</option>
-                            <option value="3">Dec</option>
-                            <option value="4">Jan</option>
-                            <option value="5">Mar</option>
-                            <option value="6">Apr (A)</option>
-                            <option value="7">Apr (B)</option>
-                            <option value="8">May</option>
-                            <option value="9">July</option>
-                            <option value="10">Aug</option>
-                            <option value="11">Sept</option>
-                        </select>
+                        <select id="start-issue" onchange="onPackageChange()"></select>
                     </div>
                 </div>
             </div>
@@ -928,6 +915,22 @@ function buildStartVolumeDropdown() {
         sel.appendChild(opt);
     });
     sel.value = 32;
+    buildStartIssueDropdown();
+}
+
+function buildStartIssueDropdown() {
+    var volNum = parseInt(document.getElementById('start-volume').value) || 32;
+    var sel = document.getElementById('start-issue');
+    var prevVal = sel.value;
+    sel.innerHTML = '';
+    ISSUE_TEMPLATE.forEach(function(issue, idx) {
+        var code = volNum + String(issue.num).padStart(2, '0');
+        var opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = code + ' — ' + issue.name + (issue.isPreview ? ' (Preview)' : '');
+        sel.appendChild(opt);
+    });
+    if (prevVal !== '' && prevVal >= 0 && prevVal < 12) sel.value = prevVal;
 }
 
 function detectNextIssue() {
@@ -1002,8 +1005,9 @@ function buildVolumeSelector() {
                 var sel = s === defaultSize ? ' selected' : '';
                 return '<option value="' + s + '"' + sel + '>' + SIZE_LABELS[s] + '</option>';
             }).join('');
+            var issueCode = vol.num + String(issue.num).padStart(2, '0');
             card.innerHTML = previewBadge +
-                '<div class="issue-num">' + issue.num + '</div>' +
+                '<div class="issue-num">' + issueCode + '</div>' +
                 '<div class="issue-name">' + issue.name + '</div>' +
                 '<div class="issue-price" id="price-' + compositeId + '">\u2014</div>' +
                 '<select id="size-' + compositeId + '" onchange="onIssueSizeChange(\'' + compositeId + '\');recalculate()">' + sizeOptions + '</select>';
@@ -1710,6 +1714,7 @@ function generatePDF() {
         var price = getIssuePriceFromState(key, tierInfo.tier);
         magazineTotal += price;
         issuesByVolume[info.volume].push({
+            volNum: info.volume,
             issueIdx: info.issueIdx,
             issue: ISSUE_TEMPLATE[info.issueIdx],
             size: info.size,
@@ -1754,8 +1759,9 @@ function generatePDF() {
                 checkPageBreak(5);
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(8);
-                doc.text(String(item.issue.num), m + 1, y);
-                doc.text(item.issue.name + (item.issue.isPreview ? ' (Preview)' : ''), m + 10, y);
+                var pdfIssueCode = item.volNum + String(item.issue.num).padStart(2, '0');
+                doc.text(pdfIssueCode, m + 1, y);
+                doc.text(item.issue.name + (item.issue.isPreview ? ' (Preview)' : ''), m + 16, y);
                 doc.text(SIZE_LABELS[item.size], m + 45, y);
                 doc.text('$' + item.price.toLocaleString(), rightCol - 2, y, { align: 'right' });
                 y += 4.2;
@@ -2050,8 +2056,10 @@ function sendToGina() {
         var selectedIssues = [];
         Object.keys(STATE.selectedIssues).forEach(function(key) {
             var info = STATE.selectedIssues[key];
+            var issueNum = ISSUE_TEMPLATE[info.issueIdx].num;
             selectedIssues.push({
                 volume: info.volume,
+                issueCode: info.volume + String(issueNum).padStart(2, '0'),
                 issue: ISSUE_TEMPLATE[info.issueIdx].name,
                 size: SIZE_LABELS[info.size],
                 price: getIssuePriceFromState(key, tierInfo.tier)
