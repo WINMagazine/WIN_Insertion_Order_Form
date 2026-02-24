@@ -770,7 +770,7 @@
                 <h2>Payment & Signatures</h2>
                 <div class="payment-terms">
                     <strong>Payment Terms:</strong> NET 30. Finance charge of 1.5%/month will be applied to balances past 30 days.<br>
-                    <strong>3-Year Fixed-Price:</strong> This insertion order locks in Volume 32 pricing for up to 3 years.
+                    <strong>3-Year Fixed-Price:</strong> This Insertion Order Contract locks in Volume 32 (2026) pricing and discounts for 3 years providing this base contract at a minimum renews annually each year without a lapse. If the contract is a renewal, the original Contract's Fixed Price and Discount will be noted above.
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -1960,7 +1960,11 @@ function generatePDF() {
     doc.setTextColor(100, 100, 100);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
-    doc.text('NET 30. Finance charge 1.5%/mo on balances past 30 days. 3-Year Fixed-Price locks in current pricing.', m, y);
+    doc.text('NET 30. Finance charge 1.5%/mo on balances past 30 days.', m, y);
+    y += 3;
+    doc.text('This Insertion Order Contract locks in Volume 32 (2026) pricing and discounts for 3 years providing this base contract', m, y);
+    y += 3;
+    doc.text('at a minimum renews annually each year without a lapse. If the contract is a renewal, the original Contract\'s Fixed Price and Discount will be noted above.', m, y);
     y += 5;
 
     // PAGE 1 SIGNATURES
