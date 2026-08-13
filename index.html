@@ -7,9 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
             --win-red: #c41e3a;
             --win-red-dark: #9a1830;
@@ -21,14 +19,12 @@
             --win-green: #2d8a4e;
             --win-blue: #2563eb;
         }
-
         body {
             font-family: 'Source Sans Pro', sans-serif;
             background: var(--win-light);
             color: var(--win-black);
             line-height: 1.5;
         }
-
         /* ===== LOGIN SCREEN ===== */
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -70,13 +66,10 @@
         }
         .login-box button:hover { background: var(--win-red-dark); }
         .login-error { color: var(--win-red); font-size: 13px; margin-top: 10px; display: none; }
-
         /* ===== MAIN CONTENT ===== */
         .main-content { display: none; }
         .main-content.visible { display: block; }
-
         .container { max-width: 960px; margin: 0 auto; padding: 20px; }
-
         header {
             background: var(--win-black); color: white;
             padding: 22px 30px; margin-bottom: 24px;
@@ -91,7 +84,6 @@
         header .right-info {
             text-align: right; font-size: 12px; opacity: 0.7;
         }
-
         /* ===== FORM SECTIONS ===== */
         .form-section {
             background: var(--win-white); border: 1px solid var(--win-border);
@@ -124,14 +116,12 @@
             outline: none; border-color: var(--win-red);
         }
         .form-group textarea { resize: vertical; min-height: 60px; }
-
         /* ===== PACKAGE SELECTOR ===== */
         .package-selector {
             display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
             margin-bottom: 20px;
         }
         .package-selector .form-group { margin-bottom: 0; }
-
         /* ===== ISSUE GRID ===== */
         .issue-controls {
             display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
@@ -148,7 +138,6 @@
         .issue-controls .active-btn {
             background: var(--win-red); color: white; border-color: var(--win-red);
         }
-
         .issues-grid {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
         }
@@ -190,7 +179,6 @@
             display: none;
         }
         .issue-card.selected select { display: block; }
-
         .customize-toggle {
             margin: 14px 0 0; display: flex; align-items: center; gap: 8px;
         }
@@ -201,7 +189,6 @@
             font-size: 13px; font-weight: 600; color: var(--win-gray);
             cursor: pointer;
         }
-
         /* ===== EMAIL/DIGITAL SECTION ===== */
         .digital-options {
             display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
@@ -237,7 +224,6 @@
         .email-qty-row .qty-total {
             font-weight: 700; font-size: 14px;
         }
-
         /* ===== DISCOUNTS ===== */
         .discount-row {
             display: flex; gap: 10px; align-items: center; margin-bottom: 8px;
@@ -261,7 +247,6 @@
             font-family: 'Source Sans Pro', sans-serif;
         }
         .add-btn:hover { border-color: var(--win-red); color: var(--win-red); }
-
         .prepay-check {
             display: flex; align-items: center; gap: 10px;
             padding: 12px; border: 1px solid var(--win-border); border-radius: 6px;
@@ -270,7 +255,10 @@
         .prepay-check input { width: 18px; height: 18px; accent-color: var(--win-green); }
         .prepay-check label { font-size: 14px; font-weight: 600; cursor: pointer; }
         .prepay-check .savings { color: var(--win-green); font-weight: 700; margin-left: 6px; }
-
+        /* ===== SPONSORSHIPS ===== */
+        .sponsorship-hint {
+            font-size: 13px; color: var(--win-gray); margin-bottom: 12px;
+        }
         /* ===== ADDITIONAL OPTIONS ===== */
         .options-row {
             display: flex; gap: 20px; flex-wrap: wrap;
@@ -280,7 +268,6 @@
         }
         .option-item input { width: 16px; height: 16px; accent-color: var(--win-red); }
         .option-item label { font-size: 14px; cursor: pointer; }
-
         /* ===== TOTALS ===== */
         .totals-section {
             background: var(--win-black); color: white;
@@ -311,7 +298,6 @@
             font-weight: 700; letter-spacing: 0.5px; margin-left: 8px;
             text-transform: uppercase;
         }
-
         /* ===== PAYMENT & SIGNATURES ===== */
         .payment-terms {
             background: #fef3cd; border: 1px solid #ffc107;
@@ -333,7 +319,6 @@
             margin-bottom: 4px;
         }
         .sig-caption { font-size: 11px; color: var(--win-gray); }
-
         /* ===== SUBMIT ===== */
         .submit-section { text-align: center; margin: 24px 0; }
         .submit-section button {
@@ -350,7 +335,6 @@
             background: var(--win-border); color: var(--win-black);
         }
         .btn-reset:hover { background: #bbb; }
-
         .status-message {
             margin-top: 14px; padding: 12px; border-radius: 6px; font-size: 14px;
             display: none;
@@ -358,7 +342,6 @@
         .status-message.success { display: block; background: #d4edda; color: #155724; }
         .status-message.error { display: block; background: #f8d7da; color: #721c24; }
         .status-message.info { display: block; background: #d1ecf1; color: #0c5460; }
-
         /* ===== VOLUME CHECKLIST ===== */
         .volume-checklist {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
@@ -389,7 +372,6 @@
             margin-left: auto;
         }
         .volume-check-item .vol-badge.has-count { display: inline-block; }
-
         /* ===== VOLUME ISSUE SECTIONS ===== */
         .volume-section {
             border: 1px solid var(--win-border); border-radius: 6px;
@@ -427,7 +409,6 @@
         .volume-controls button:hover {
             background: var(--win-red); color: white; border-color: var(--win-red);
         }
-
         /* ===== PDF PREVIEW MODAL ===== */
         .pdf-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -460,7 +441,6 @@
             background: var(--win-green); color: white;
         }
         .pdf-modal-actions .btn-send:hover { background: #236b3e; }
-
         /* ===== TIER COMPARISON PANEL ===== */
         .tier-panel {
             background: var(--win-white); border: 1px solid var(--win-border);
@@ -495,7 +475,6 @@
             background: #fef2f4; border-left: 3px solid var(--win-red);
         }
         .tier-table tr.active-tier td:first-child { font-weight: 700; color: var(--win-red); }
-
         /* ===== DRAFT RESTORE MODAL ===== */
         .draft-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -522,7 +501,6 @@
         }
         .draft-modal-btns .btn-yes { background: var(--win-red); color: white; }
         .draft-modal-btns .btn-no { background: var(--win-border); color: var(--win-black); }
-
         /* ===== EMAIL SEASON INPUTS ===== */
         .email-season-row {
             display: flex; gap: 14px; align-items: center; margin-top: 10px; flex-wrap: wrap;
@@ -540,7 +518,6 @@
             margin-top: 6px; display: none;
         }
         .email-block-note.visible { display: block; }
-
         /* Responsive */
         @media (max-width: 768px) {
             .form-row, .package-selector, .digital-options, .sig-row { grid-template-columns: 1fr; }
@@ -567,7 +544,6 @@
             <div class="login-error" id="login-error">Incorrect PIN. Try again.</div>
         </div>
     </div>
-
     <!-- MAIN FORM -->
     <div class="main-content" id="main-content">
     <div class="container">
@@ -582,9 +558,7 @@
                 P: 641-792-4436
             </div>
         </header>
-
         <form id="io-form" onsubmit="return false;">
-
             <!-- ADVERTISER INFO -->
             <div class="form-section">
                 <h2>Advertiser Information</h2>
@@ -617,7 +591,6 @@
                     <label for="new-customer">New customer — show billing address</label>
                 </div>
             </div>
-
             <!-- PACKAGE SELECTION -->
             <div class="form-section">
                 <h2>Package Selection</h2>
@@ -627,8 +600,9 @@
                         <select id="package-type" onchange="onPackageChange()">
                             <option value="custom">Custom / À la Carte</option>
                             <option value="5issue">5-Issue Print Package (20% Off)</option>
+                            <option value="10issue">10-Issue Print Package (Monthly Rate)</option>
                             <option value="annual">12-Issue Annual Print (23% Off)</option>
-                            <option value="combo3">3-Month Combo — 3 Issues + 2 Emails (9-33% Off)</option>
+                            <option value="combo3">3-Month Combo — 3 Issues + 2 Emails (9-13% Off)</option>
                             <option value="combo6">6-Month Combo — 6 Issues + 3 Emails (7-13% Off)</option>
                             <option value="comboA">Annual Combo — 12 Issues + 4 Emails (17-21% Off)</option>
                             <option value="emailOnly">Email / Banner Only</option>
@@ -656,7 +630,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- ISSUES (Volume Accordion) -->
             <div class="form-section">
                 <h2>Issue Selection</h2>
@@ -667,7 +640,6 @@
                     <label for="customize-sizes">Customize ad sizes per issue</label>
                 </div>
             </div>
-
             <!-- EMAIL / DIGITAL ADS -->
             <div class="form-section" id="digital-section">
                 <h2>Email & Digital Advertising</h2>
@@ -718,7 +690,13 @@
                     </div>
                 </div>
             </div>
-
+            <!-- SECTION SPONSORSHIPS & PREMIUM PLACEMENT -->
+            <div class="form-section">
+                <h2>Section Sponsorships & Premium Placement</h2>
+                <div class="sponsorship-hint">Add sponsorship or premium placement charges to this account (e.g., "Rankings Section Sponsor", "Back Cover Placement", "Center Spread").</div>
+                <div id="sponsorships-container"></div>
+                <button type="button" class="add-btn" onclick="addSponsorship()">+ Add Sponsorship / Placement Charge</button>
+            </div>
             <!-- ADDITIONAL OPTIONS -->
             <div class="form-section">
                 <h2>Additional Options</h2>
@@ -733,13 +711,12 @@
                     </div>
                 </div>
             </div>
-
             <!-- DISCOUNTS & NOTES -->
             <div class="form-section">
                 <h2>Discounts & Notes</h2>
                 <div class="prepay-check">
                     <input type="checkbox" id="prepay-discount" onchange="recalculate()">
-                    <label for="prepay-discount">Apply 7% Prepayment Discount (paid by Oct 1)</label>
+                    <label for="prepay-discount">Apply 7% Prepayment Discount (paid within Net 15 of reservation)</label>
                     <span class="savings" id="prepay-savings"></span>
                 </div>
                 <div id="discounts-container"></div>
@@ -749,7 +726,6 @@
                     <textarea id="notes" rows="3" placeholder="Notes or special terms..."></textarea>
                 </div>
             </div>
-
             <!-- TIER COMPARISON -->
             <div class="tier-panel" id="tier-panel">
                 <div class="tier-panel-header" onclick="document.getElementById('tier-panel').classList.toggle('expanded')">
@@ -758,19 +734,17 @@
                 </div>
                 <div class="tier-panel-body" id="tier-panel-body"></div>
             </div>
-
             <!-- TOTALS -->
             <div class="totals-section" id="totals-section">
                 <h2>Order Summary</h2>
                 <div id="totals-lines"></div>
             </div>
-
             <!-- PAYMENT & SIGNATURES -->
             <div class="form-section">
                 <h2>Payment & Signatures</h2>
                 <div class="payment-terms">
                     <strong>Payment Terms:</strong> NET 30. Finance charge of 1.5%/month will be applied to balances past 30 days.<br>
-                    <strong>3-Year Fixed-Price:</strong> This Insertion Order Contract locks in Volume 32 (2026) pricing and discounts for 3 years providing this base contract at a minimum renews annually each year without a lapse. If the contract is a renewal, the original Contract's Fixed Price and Discount will be noted above.
+                    <strong>3-Year Fixed-Price:</strong> This Insertion Order Contract locks in Volume 33 (2026–27) pricing and discounts for 3 years providing this base contract at a minimum renews annually each year without a lapse. If the contract is a renewal, the original Contract's Fixed Price and Discount will be noted above.
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -797,18 +771,15 @@
                     </div>
                 </div>
             </div>
-
             <!-- SUBMIT -->
             <div class="submit-section">
                 <button type="button" class="submit-section btn-reset" onclick="resetForm()">Reset</button>
                 <button type="button" class="submit-section btn-submit" id="submit-btn" onclick="submitForm()">Generate PDF</button>
                 <div class="status-message" id="status-msg"></div>
             </div>
-
         </form>
     </div>
     </div>
-
     <!-- PDF PREVIEW MODAL -->
     <div class="pdf-modal-overlay" id="pdf-modal">
         <div class="pdf-modal-frame">
@@ -819,7 +790,6 @@
             <button class="btn-send" id="btn-send-gina" onclick="sendToGina()">Send to Gina</button>
         </div>
     </div>
-
     <!-- DRAFT RESTORE MODAL -->
     <div class="draft-modal-overlay" id="draft-modal">
         <div class="draft-modal">
@@ -831,7 +801,6 @@
             </div>
         </div>
     </div>
-
 <script>
 // ============================================================
 //  CONFIG
@@ -840,7 +809,6 @@
 // Expected format: https://peyton.app.n8n.cloud/webhook/win-insertion-order
 var WEBHOOK_URL = 'https://peyton.app.n8n.cloud/webhook/win-insertion-order';
 var DRAFT_KEY = 'win_io_draft_v2';
-
 // ============================================================
 //  PRICING DATA
 // ============================================================
@@ -858,36 +826,33 @@ var ISSUE_TEMPLATE = [
     { id: 'aug',   name: 'Aug',     num: 11, isPreview: false, month: 8,  label: '' },
     { id: 'sept',  name: 'Sept',    num: 12, isPreview: false, month: 9,  label: '' }
 ];
-
 var VOLUMES = [];
 for (var v = 32; v <= 42; v++) {
     var startYear = 2025 + (v - 32);
-    VOLUMES.push({ num: v, label: 'Volume ' + v + ' (' + startYear + '\u2013' + (startYear + 1) + ')' });
+    VOLUMES.push({ num: v, label: 'Volume ' + v + ' (' + startYear + '–' + (startYear + 1) + ')' });
 }
-
 var SIZES = ['full','half','third','quarter','eighth'];
 var SIZE_LABELS = { full: 'Full Page', half: '1/2 Page', third: '1/3 Page', quarter: '1/4 Page', eighth: '1/8 Page' };
-
-var SINGLE_RATE = { full: 1224, half: 675, third: 505, quarter: 369, eighth: 227 };
-var PREVIEW_RATE = { full: 2595, half: 1428, third: 963, quarter: 737, eighth: 442 };
-var FIVE_RATE = { full: 979, half: 540, third: 404, quarter: 295, eighth: 182 };
-var ANNUAL_RATE = { full: 1032, half: 569, third: 417, quarter: 307, eighth: 188 };
-var COMBO_ANNUAL = { full: 1187, half: 723, third: 572, quarter: 461, eighth: 342 };
-var COMBO_6MO = { full: 1278, half: 820, third: 678, quarter: 564, eighth: 446 };
-var COMBO_3MO = { full: 1410, half: 917, third: 763, quarter: 641, eighth: 376 };
-
+// Volume 33 (2026–2027) rate sheet
+var SINGLE_RATE = { full: 1261, half: 695, third: 520, quarter: 380, eighth: 234 };
+var PREVIEW_RATE = { full: 2673, half: 1471, third: 992, quarter: 757, eighth: 455 };
+var FIVE_RATE = { full: 1009, half: 556, third: 416, quarter: 304, eighth: 187 };
+var TEN_RATE = { full: 1261, half: 695, third: 520, quarter: 380, eighth: 234 };
+var ANNUAL_RATE = { full: 1063, half: 586, third: 429, quarter: 317, eighth: 194 };
+var COMBO_ANNUAL = { full: 1223, half: 745, third: 589, quarter: 475, eighth: 352 };
+var COMBO_6MO = { full: 1316, half: 845, third: 698, quarter: 581, eighth: 459 };
+var COMBO_3MO = { full: 1452, half: 945, third: 786, quarter: 660, eighth: 387 };
 // ============================================================
 //  GLOBAL STATE
 // ============================================================
 var STATE = {
     selectedIssues: {},
     customizeSizes: false,
-    expandedVolumes: { 32: true },
+    expandedVolumes: { 33: true },
     bannerPrice: 2600,
     emailInSeason: 0,
     emailOffSeason: 0
 };
-
 // ============================================================
 //  INIT
 // ============================================================
@@ -899,12 +864,10 @@ function init() {
     recalculate();
     attachAutoSave();
 }
-
 function setTodayDate() {
     var today = new Date().toISOString().split('T')[0];
     document.getElementById('sign-date').value = today;
 }
-
 function buildStartVolumeDropdown() {
     var sel = document.getElementById('start-volume');
     sel.innerHTML = '';
@@ -914,12 +877,11 @@ function buildStartVolumeDropdown() {
         opt.textContent = v.label;
         sel.appendChild(opt);
     });
-    sel.value = 32;
+    sel.value = 33;
     buildStartIssueDropdown();
 }
-
 function buildStartIssueDropdown() {
-    var volNum = parseInt(document.getElementById('start-volume').value) || 32;
+    var volNum = parseInt(document.getElementById('start-volume').value) || 33;
     var sel = document.getElementById('start-issue');
     var prevVal = sel.value;
     sel.innerHTML = '';
@@ -932,7 +894,6 @@ function buildStartIssueDropdown() {
     });
     if (prevVal !== '' && prevVal >= 0 && prevVal < 12) sel.value = prevVal;
 }
-
 function detectNextIssue() {
     var now = new Date();
     var currentMonth = now.getMonth() + 1;
@@ -940,18 +901,16 @@ function detectNextIssue() {
     var nextIdx = monthToIssue[currentMonth] || 0;
     document.getElementById('start-issue').value = nextIdx;
     setTimeout(function() {
-        var card = document.getElementById('card-v32-' + nextIdx);
+        var card = document.getElementById('card-v33-' + nextIdx);
         if (card) card.classList.add('next-issue');
     }, 50);
 }
-
 function buildVolumeSelector() {
     var checklist = document.getElementById('volume-checklist');
     var issuesContainer = document.getElementById('volume-issues-container');
     var defaultSize = document.getElementById('default-size').value;
     checklist.innerHTML = '';
     issuesContainer.innerHTML = '';
-
     // Build checklist grid
     checklist.className = 'volume-checklist';
     VOLUMES.forEach(function(vol) {
@@ -968,7 +927,6 @@ function buildVolumeSelector() {
             '<span class="' + badgeClass + '" id="vol-badge-' + vol.num + '">' + count + '</span>';
         checklist.appendChild(item);
     });
-
     // Build issue sections (hidden by default, shown when checkbox is checked)
     VOLUMES.forEach(function(vol) {
         var isChecked = !!STATE.expandedVolumes[vol.num];
@@ -1009,13 +967,12 @@ function buildVolumeSelector() {
             card.innerHTML = previewBadge +
                 '<div class="issue-num">' + issueCode + '</div>' +
                 '<div class="issue-name">' + issue.name + '</div>' +
-                '<div class="issue-price" id="price-' + compositeId + '">\u2014</div>' +
+                '<div class="issue-price" id="price-' + compositeId + '">—</div>' +
                 '<select id="size-' + compositeId + '" onchange="onIssueSizeChange(\'' + compositeId + '\');recalculate()">' + sizeOptions + '</select>';
             grid.appendChild(card);
         });
     });
 }
-
 // ============================================================
 //  VOLUME & ISSUE SELECTION
 // ============================================================
@@ -1041,7 +998,6 @@ function toggleVolumeCheck(volNum) {
         saveDraft();
     }
 }
-
 function getVolumeSelectionCount(volNum) {
     var count = 0;
     Object.keys(STATE.selectedIssues).forEach(function(key) {
@@ -1049,7 +1005,6 @@ function getVolumeSelectionCount(volNum) {
     });
     return count;
 }
-
 function updateVolumeBadges() {
     VOLUMES.forEach(function(vol) {
         var count = getVolumeSelectionCount(vol.num);
@@ -1067,7 +1022,6 @@ function updateVolumeBadges() {
         }
     });
 }
-
 function toggleIssue(volNum, idx) {
     var key = 'v' + volNum + '-' + idx;
     var card = document.getElementById('card-' + key);
@@ -1081,14 +1035,12 @@ function toggleIssue(volNum, idx) {
     }
     updateVolumeBadges(); recalculate(); saveDraft();
 }
-
 function onIssueSizeChange(compositeId) {
     if (STATE.selectedIssues[compositeId]) {
         STATE.selectedIssues[compositeId].size = document.getElementById('size-' + compositeId).value;
     }
     saveDraft();
 }
-
 function selectAllVolume(volNum) {
     var defaultSize = document.getElementById('default-size').value;
     ISSUE_TEMPLATE.forEach(function(issue, idx) {
@@ -1098,7 +1050,6 @@ function selectAllVolume(volNum) {
     });
     syncStateToDOM(); recalculate(); saveDraft();
 }
-
 function selectEveryOtherVolume(volNum) {
     var defaultSize = document.getElementById('default-size').value;
     ISSUE_TEMPLATE.forEach(function(issue, idx) {
@@ -1110,17 +1061,14 @@ function selectEveryOtherVolume(volNum) {
     });
     syncStateToDOM(); recalculate(); saveDraft();
 }
-
 function clearVolume(volNum) {
     ISSUE_TEMPLATE.forEach(function(issue, idx) { delete STATE.selectedIssues['v' + volNum + '-' + idx]; });
     syncStateToDOM(); recalculate(); saveDraft();
 }
-
 function clearAllIssues() {
     STATE.selectedIssues = {};
     syncStateToDOM(); recalculate(); saveDraft();
 }
-
 function selectIssuesFromStart(count) {
     var startVol = parseInt(document.getElementById('start-volume').value);
     var startIdx = parseInt(document.getElementById('start-issue').value);
@@ -1143,7 +1091,6 @@ function selectIssuesFromStart(count) {
     });
     syncStateToDOM();
 }
-
 function syncStateToDOM() {
     VOLUMES.forEach(function(vol) {
         ISSUE_TEMPLATE.forEach(function(issue, idx) {
@@ -1176,7 +1123,6 @@ function syncStateToDOM() {
     });
     updateVolumeBadges();
 }
-
 function toggleCustomize() {
     STATE.customizeSizes = document.getElementById('customize-sizes').checked;
     var defaultSize = document.getElementById('default-size').value;
@@ -1189,7 +1135,6 @@ function toggleCustomize() {
     }
     syncStateToDOM(); recalculate(); saveDraft();
 }
-
 function onDefaultSizeChange() {
     var def = document.getElementById('default-size').value;
     if (!STATE.customizeSizes) {
@@ -1205,7 +1150,6 @@ function onDefaultSizeChange() {
     }
     recalculate(); updateTierComparison(); saveDraft();
 }
-
 // ============================================================
 //  PACKAGE CHANGE
 // ============================================================
@@ -1215,7 +1159,6 @@ function onPackageChange() {
     var emailQtyRow = document.getElementById('email-qty-row');
     var emailIn = document.getElementById('email-in-season');
     var emailOff = document.getElementById('email-off-season');
-
     if (pkg === 'emailOnly') {
         clearAllIssues();
         emailCheck.checked = true;
@@ -1223,14 +1166,13 @@ function onPackageChange() {
         emailQtyRow.style.display = 'flex';
         recalculate(); saveDraft(); return;
     }
-
     switch (pkg) {
         case '5issue': selectIssuesFromStart(5); break;
+        case '10issue': selectIssuesFromStart(10); break;
         case 'annual': case 'comboA': selectIssuesFromStart(12); break;
         case 'combo6': selectIssuesFromStart(6); break;
         case 'combo3': selectIssuesFromStart(3); break;
     }
-
     if (pkg === 'comboA') {
         emailCheck.checked = true; toggleDigitalCard('email-card', true);
         emailQtyRow.style.display = 'flex';
@@ -1246,7 +1188,6 @@ function onPackageChange() {
     }
     recalculate(); saveDraft();
 }
-
 // ============================================================
 //  DIGITAL CARD TOGGLES
 // ============================================================
@@ -1263,7 +1204,6 @@ function toggleDigitalCard(cardId, checked) {
         }
     }
 }
-
 // ============================================================
 //  DISCOUNTS
 // ============================================================
@@ -1277,7 +1217,33 @@ function addDiscount() {
         '<button type="button" class="remove-btn" onclick="this.parentElement.remove();recalculate();saveDraft();">&times;</button>';
     container.appendChild(row);
 }
-
+// ============================================================
+//  SECTION SPONSORSHIPS & PREMIUM PLACEMENT
+// ============================================================
+function addSponsorship() {
+    var container = document.getElementById('sponsorships-container');
+    var row = document.createElement('div');
+    row.className = 'discount-row';
+    row.innerHTML =
+        '<input type="text" placeholder="Sponsorship / placement description..." oninput="recalculate();saveDraft()">' +
+        '<input type="number" placeholder="$ amount" step="0.01" min="0" oninput="recalculate();saveDraft()">' +
+        '<button type="button" class="remove-btn" onclick="this.parentElement.remove();recalculate();saveDraft();">&times;</button>';
+    container.appendChild(row);
+}
+function getSponsorshipItems() {
+    var items = [];
+    document.querySelectorAll('#sponsorships-container .discount-row').forEach(function(row) {
+        var desc = row.querySelector('input[type="text"]').value || 'Sponsorship / Premium Placement';
+        var amt = parseFloat(row.querySelector('input[type="number"]').value) || 0;
+        if (amt !== 0) items.push({ label: desc, amount: Math.abs(amt) });
+    });
+    return items;
+}
+function getSponsorshipTotal() {
+    var total = 0;
+    getSponsorshipItems().forEach(function(s) { total += s.amount; });
+    return total;
+}
 // ============================================================
 //  PRICING ENGINE
 // ============================================================
@@ -1287,7 +1253,6 @@ function getEmailTotalWeeks() {
     STATE.emailInSeason = inS; STATE.emailOffSeason = offS;
     return inS + offS;
 }
-
 function determineTier() {
     var pkg = document.getElementById('package-type').value;
     var issueCount = Object.keys(STATE.selectedIssues).length;
@@ -1298,33 +1263,32 @@ function determineTier() {
     var nonPreviewCount = hasPreview ? issueCount - 1 : issueCount;
     var emailQty = getEmailTotalWeeks();
     var emailChecked = document.getElementById('email-ads').checked;
-
     if (pkg === 'comboA') return { tier: 'comboA', label: 'Annual Combo', issueCount: issueCount };
     if (pkg === 'combo6') return { tier: 'combo6', label: '6-Month Combo', issueCount: issueCount };
     if (pkg === 'combo3') return { tier: 'combo3', label: '3-Month Combo', issueCount: issueCount };
     if (pkg === 'annual') return { tier: 'annual', label: '12-Issue Annual (23% Off)', issueCount: issueCount };
+    if (pkg === '10issue') return { tier: '10issue', label: '10-Issue Print Package', issueCount: issueCount };
     if (pkg === '5issue') return { tier: '5issue', label: '5-Issue Print Package (20% Off)', issueCount: issueCount };
     if (pkg === 'emailOnly') return { tier: 'emailOnly', label: 'Email/Banner Only', issueCount: 0 };
-
     if (issueCount === 12 && emailChecked && emailQty >= 4) return { tier: 'comboA', label: 'Annual Combo (Auto-Detected)', issueCount: issueCount };
     if (issueCount >= 12) return { tier: 'annual', label: '12-Issue Annual (Auto-Detected)', issueCount: issueCount };
     if (issueCount >= 6 && emailChecked && emailQty >= 3) return { tier: 'combo6', label: '6-Month Combo (Auto-Detected)', issueCount: issueCount };
+    if (nonPreviewCount >= 10 && (!emailChecked || emailQty < 2)) return { tier: '10issue', label: '10-Issue Package (Auto-Detected)', issueCount: issueCount };
     if (nonPreviewCount >= 5 && (!emailChecked || emailQty < 2)) return { tier: '5issue', label: '5-Issue Package (Auto-Detected)', issueCount: issueCount };
     if (issueCount >= 3 && emailChecked && emailQty >= 2) return { tier: 'combo3', label: '3-Month Combo (Auto-Detected)', issueCount: issueCount };
     return { tier: 'single', label: 'Single Insertion', issueCount: issueCount };
 }
-
 function getRateForTier(tier) {
     switch (tier) {
         case 'comboA': return COMBO_ANNUAL;
         case 'combo6': return COMBO_6MO;
         case 'combo3': return COMBO_3MO;
         case 'annual': return ANNUAL_RATE;
+        case '10issue': return TEN_RATE;
         case '5issue': return FIVE_RATE;
         default: return SINGLE_RATE;
     }
 }
-
 function getIssuePriceFromState(key, tier) {
     var info = STATE.selectedIssues[key];
     if (!info) return 0;
@@ -1335,13 +1299,11 @@ function getIssuePriceFromState(key, tier) {
     if (issue.isPreview) return PREVIEW_RATE[size];
     return rate[size];
 }
-
 function calculateEmailTotal(isCombo, tier) {
     var inSeason = parseInt(document.getElementById('email-in-season').value) || 0;
     var offSeason = parseInt(document.getElementById('email-off-season').value) || 0;
     var totalWeeks = inSeason + offSeason;
     var blockNote = document.getElementById('email-block-note');
-
     if (isCombo) {
         var comboIncl = tier === 'comboA' ? 4 : (tier === 'combo6' ? 3 : 2);
         var remainIn = Math.max(0, inSeason - comboIncl);
@@ -1362,7 +1324,6 @@ function calculateEmailTotal(isCombo, tier) {
     document.getElementById('email-total').textContent = '$' + total.toLocaleString();
     return total;
 }
-
 // ============================================================
 //  RECALCULATE
 // ============================================================
@@ -1371,45 +1332,40 @@ function recalculate() {
     var tier = tierInfo.tier;
     var magazineTotal = 0;
     var issueCount = Object.keys(STATE.selectedIssues).length;
-
     Object.keys(STATE.selectedIssues).forEach(function(key) {
         var price = getIssuePriceFromState(key, tier);
         var priceEl = document.getElementById('price-' + key);
         if (priceEl) priceEl.textContent = '$' + price.toLocaleString();
         magazineTotal += price;
     });
-
     VOLUMES.forEach(function(vol) {
         ISSUE_TEMPLATE.forEach(function(issue, idx) {
             var key = 'v' + vol.num + '-' + idx;
             if (!STATE.selectedIssues[key]) {
                 var priceEl = document.getElementById('price-' + key);
-                if (priceEl) priceEl.textContent = '\u2014';
+                if (priceEl) priceEl.textContent = '—';
             }
         });
     });
-
     var isCombo = tier === 'comboA' || tier === 'combo6' || tier === 'combo3';
     var bannerTotal = 0;
     var emailTotal = 0;
-
     if (document.getElementById('web-banner').checked) {
         bannerTotal = STATE.bannerPrice;
     }
-
     if (document.getElementById('email-ads').checked) {
         emailTotal = calculateEmailTotal(isCombo, tier);
     } else {
         document.getElementById('email-total').textContent = '$0';
         document.getElementById('email-block-note').classList.remove('visible');
     }
-
     if (tier === 'emailOnly' && document.getElementById('email-ads').checked) {
         emailTotal = calculateEmailTotal(false, tier);
     }
-
-    var subtotal = magazineTotal + emailTotal + bannerTotal;
-
+    var sponsorshipItems = getSponsorshipItems();
+    var sponsorshipTotal = 0;
+    sponsorshipItems.forEach(function(s) { sponsorshipTotal += s.amount; });
+    var subtotal = magazineTotal + emailTotal + bannerTotal + sponsorshipTotal;
     var totalDiscounts = 0;
     var discountLines = [];
     document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
@@ -1420,7 +1376,6 @@ function recalculate() {
             discountLines.push({ label: desc, amount: -Math.abs(amt) });
         }
     });
-
     var prepayAmt = 0;
     if (document.getElementById('prepay-discount').checked) {
         prepayAmt = Math.round(subtotal * 0.07);
@@ -1430,9 +1385,7 @@ function recalculate() {
     } else {
         document.getElementById('prepay-savings').textContent = '';
     }
-
     var grandTotal = subtotal - totalDiscounts;
-
     var html = '';
     if (tierInfo.label && tier !== 'single' && tier !== 'emailOnly') {
         html += '<div class="total-line"><span class="label">Pricing Tier</span><span>' + cleanTierLabel(tierInfo.label) + '</span></div>';
@@ -1455,16 +1408,17 @@ function recalculate() {
             html += '<div class="total-line"><span class="label">Email Ads (' + comboE2 + ' wks included in combo)</span><span>$0</span></div>';
         }
     }
-
+    sponsorshipItems.forEach(function(s) {
+        html += '<div class="total-line"><span class="label">' + s.label + '</span><span>$' + s.amount.toLocaleString() + '</span></div>';
+    });
     html += '<div class="total-line subtotal"><span class="label">Subtotal</span><span>$' + subtotal.toLocaleString() + '</span></div>';
     discountLines.forEach(function(d) {
         html += '<div class="total-line discount"><span class="label">' + d.label + '</span><span>-$' + Math.abs(d.amount).toLocaleString() + '</span></div>';
     });
     html += '<div class="total-line grand-total"><span class="label">Total</span><span>$' + grandTotal.toLocaleString() + '</span></div>';
-
     if (issueCount > 0) {
         var perMonth = Math.round(grandTotal / issueCount);
-        html += '<div class="total-line" style="opacity:0.6;font-size:13px;"><span class="label">\u2248 Per Month</span><span>$' + perMonth.toLocaleString() + '/mo</span></div>';
+        html += '<div class="total-line" style="opacity:0.6;font-size:13px;"><span class="label">≈ Per Month</span><span>$' + perMonth.toLocaleString() + '/mo</span></div>';
     }
     if (tier !== 'single' && tier !== 'emailOnly' && issueCount > 0) {
         var singleTotal = calcSingleRateTotal();
@@ -1473,11 +1427,9 @@ function recalculate() {
             html += '<div class="total-line" style="color:#2d8a4e;font-size:13px;font-weight:700;"><span class="label">You save vs. single rates</span><span>$' + savings.toLocaleString() + '</span></div>';
         }
     }
-
     document.getElementById('totals-lines').innerHTML = html;
     updateTierComparison();
 }
-
 // ============================================================
 //  HELPERS
 // ============================================================
@@ -1487,11 +1439,9 @@ function toTitleCase(str) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 }
-
 function cleanTierLabel(label) {
     return label.replace(/\s*\(Auto-Detected\)/g, '');
 }
-
 function calcSingleRateTotal() {
     var total = 0;
     Object.keys(STATE.selectedIssues).forEach(function(key) {
@@ -1508,9 +1458,9 @@ function calcSingleRateTotal() {
     if (document.getElementById('web-banner').checked) {
         total += STATE.bannerPrice;
     }
+    total += getSponsorshipTotal();
     return total;
 }
-
 // Get volume range string from selected issues
 function getVolumeRange() {
     var vols = {};
@@ -1518,11 +1468,10 @@ function getVolumeRange() {
         vols[STATE.selectedIssues[key].volume] = true;
     });
     var volNums = Object.keys(vols).map(Number).sort(function(a,b){return a-b;});
-    if (volNums.length === 0) return 'Volume 32';
+    if (volNums.length === 0) return 'Volume 33';
     if (volNums.length === 1) return 'Volume ' + volNums[0];
-    return 'Volumes ' + volNums[0] + '\u2013' + volNums[volNums.length - 1];
+    return 'Volumes ' + volNums[0] + '–' + volNums[volNums.length - 1];
 }
-
 // ============================================================
 //  TIER COMPARISON PANEL
 // ============================================================
@@ -1533,6 +1482,7 @@ function updateTierComparison() {
     var tiers = [
         { key: 'single', name: 'Single Issue', rate: SINGLE_RATE[size], per: '/issue' },
         { key: '5issue', name: '5-Issue Package', rate: FIVE_RATE[size], per: '/issue' },
+        { key: '10issue', name: '10-Issue Package', rate: TEN_RATE[size], per: '/issue' },
         { key: 'annual', name: '12-Issue Annual', rate: ANNUAL_RATE[size], per: '/mo' },
         { key: 'combo3', name: '3-Mo Combo', rate: COMBO_3MO[size], per: '/mo' },
         { key: 'combo6', name: '6-Mo Combo', rate: COMBO_6MO[size], per: '/mo' },
@@ -1543,14 +1493,13 @@ function updateTierComparison() {
     tiers.forEach(function(t) {
         var isActive = t.key === currentTier;
         var savings = singleRate - t.rate;
-        var savingsStr = savings > 0 ? ('$' + savings.toLocaleString() + t.per) : '\u2014';
+        var savingsStr = savings > 0 ? ('$' + savings.toLocaleString() + t.per) : '—';
         var pct = savings > 0 ? ' (' + Math.round(savings / singleRate * 100) + '%)' : '';
         html += '<tr class="' + (isActive ? 'active-tier' : '') + '"><td>' + t.name + '</td><td>$' + t.rate.toLocaleString() + t.per + '</td><td>' + savingsStr + pct + '</td></tr>';
     });
     html += '</tbody></table>';
     document.getElementById('tier-panel-body').innerHTML = html;
 }
-
 // ============================================================
 //  PDF GENERATION (Multi-Volume)
 // ============================================================
@@ -1563,7 +1512,6 @@ function generatePDF() {
     var y = 0;
     var rightCol = pw - m;
     var totalPages = 2; // will be updated for dynamic page count
-
     function checkPageBreak(neededHeight) {
         if (y + neededHeight > ph - 20) {
             addFooter(doc.internal.getNumberOfPages());
@@ -1573,15 +1521,13 @@ function generatePDF() {
         }
         return false;
     }
-
     function addFooter(pageNum) {
         doc.setFontSize(6.5);
         doc.setTextColor(150, 150, 150);
         doc.setFont('helvetica', 'normal');
-        doc.text('WIN Magazine \u2022 PO Box 194 / Newton, IA 50208 \u2022 Gina@win-magazine.com \u2022 641-792-4436', pw / 2, ph - 7, { align: 'center' });
+        doc.text('WIN Magazine • PO Box 194 / Newton, IA 50208 • Gina@win-magazine.com • 641-792-4436', pw / 2, ph - 7, { align: 'center' });
         doc.text('WIN Magazine reserves the right to refuse any ad copy.', pw / 2, ph - 4, { align: 'center' });
     }
-
     function addSignatures(startY, signedBy, advName, contactName) {
         var sy = startY;
         doc.setDrawColor(196, 30, 58);
@@ -1614,13 +1560,12 @@ function generatePDF() {
         doc.text('Thanks ' + contactName + ', ' + signedBy, m, sy);
         return sy + 2;
     }
-
     var rawAdvName = document.getElementById('advertiser-name').value || '';
     var rawContact = document.getElementById('contact-name').value || '';
-    var advName = toTitleCase(rawAdvName) || '\u2014';
-    var contactName = toTitleCase(rawContact) || '\u2014';
-    var acctNum = document.getElementById('acct-number').value || '\u2014';
-    var contactEmail = document.getElementById('contact-email').value || '\u2014';
+    var advName = toTitleCase(rawAdvName) || '—';
+    var contactName = toTitleCase(rawContact) || '—';
+    var acctNum = document.getElementById('acct-number').value || '—';
+    var contactEmail = document.getElementById('contact-email').value || '—';
     var signedBy = document.getElementById('signed-by').value || 'Bryan';
     var signDate = document.getElementById('sign-date').value || '';
     var orderDate = signDate || new Date().toISOString().slice(0, 10);
@@ -1637,9 +1582,8 @@ function generatePDF() {
     if (volNums.length > 0) {
         var firstYear = 2025 + (volNums[0] - 32);
         var lastYear = 2025 + (volNums[volNums.length-1] - 32) + 1;
-        volRangeYears = ' (' + firstYear + '\u2013' + lastYear + ')';
+        volRangeYears = ' (' + firstYear + '–' + lastYear + ')';
     }
-
     // PAGE 1 HEADER
     doc.setFillColor(26, 26, 26);
     doc.rect(0, 0, pw, 20, 'F');
@@ -1648,13 +1592,12 @@ function generatePDF() {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
-    doc.text('WIN Magazine Insertion Order \u2014 ' + volRange + volRangeYears, m, 13);
+    doc.text('WIN Magazine Insertion Order — ' + volRange + volRangeYears, m, 13);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text('3-Year Fixed-Price Renewal Option', pw - m, 9, { align: 'right' });
     doc.text('PO Box 194 / Newton, IA 50208 / P: 641-792-4436', pw - m, 14, { align: 'right' });
     y = 27;
-
     // Advertiser info
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
@@ -1685,7 +1628,6 @@ function generatePDF() {
     doc.setFont('helvetica', 'normal');
     doc.text(tierLabel, pw / 2 + 30, y);
     y += 3;
-
     if (document.getElementById('new-customer').checked) {
         var addr = document.getElementById('billing-address').value || '';
         if (addr) {
@@ -1698,13 +1640,11 @@ function generatePDF() {
             y += 4;
         }
     }
-
     y += 1;
     doc.setDrawColor(196, 30, 58);
     doc.setLineWidth(0.4);
     doc.line(m, y, pw - m, y);
     y += 4;
-
     // GROUP ISSUES BY VOLUME
     var issuesByVolume = {};
     var magazineTotal = 0;
@@ -1721,14 +1661,11 @@ function generatePDF() {
             price: price
         });
     });
-
     // Sort issues within each volume by issue index
     Object.keys(issuesByVolume).forEach(function(v) {
         issuesByVolume[v].sort(function(a,b) { return a.issueIdx - b.issueIdx; });
     });
-
     var sortedVols = Object.keys(issuesByVolume).map(Number).sort(function(a,b){return a-b;});
-
     if (sortedVols.length > 0) {
         // Table header
         doc.setFillColor(240, 240, 240);
@@ -1741,7 +1678,6 @@ function generatePDF() {
         doc.text('Ad Size', m + 45, y);
         doc.text('Rate', rightCol - 2, y, { align: 'right' });
         y += 4.5;
-
         sortedVols.forEach(function(volNum) {
             var volLabel = VOLUMES.find(function(v){return v.num===volNum;}).label;
             checkPageBreak(8);
@@ -1754,7 +1690,6 @@ function generatePDF() {
             doc.text(volLabel, m + 1, y);
             y += 5;
             doc.setTextColor(0, 0, 0);
-
             issuesByVolume[volNum].forEach(function(item) {
                 checkPageBreak(5);
                 doc.setFont('helvetica', 'normal');
@@ -1767,7 +1702,6 @@ function generatePDF() {
                 y += 4.2;
             });
         });
-
         // Magazine subtotal
         doc.setDrawColor(180, 180, 180);
         doc.setLineWidth(0.2);
@@ -1779,7 +1713,6 @@ function generatePDF() {
         doc.text('$' + magazineTotal.toLocaleString(), rightCol - 2, y, { align: 'right' });
         y += 5;
     }
-
     // Digital ads
     var isCombo = tierInfo.tier === 'comboA' || tierInfo.tier === 'combo6' || tierInfo.tier === 'combo3';
     var hasBanner = document.getElementById('web-banner').checked;
@@ -1788,7 +1721,6 @@ function generatePDF() {
     var emailOffS = parseInt(document.getElementById('email-off-season').value) || 0;
     var emailQty = emailInS + emailOffS;
     var comboIncluded = tierInfo.tier === 'comboA' ? 4 : (tierInfo.tier === 'combo6' ? 3 : (tierInfo.tier === 'combo3' ? 2 : 0));
-
     if (hasBanner || hasEmail) {
         checkPageBreak(20);
         doc.setFont('helvetica', 'bold');
@@ -1797,13 +1729,12 @@ function generatePDF() {
         y += 4;
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8);
-
         if (hasBanner) {
             var pdfBannerStart = document.getElementById('banner-start-date').value;
             var pdfBannerEnd = document.getElementById('banner-end-date').value;
             var bannerDesc = 'Website Banner (Annual)';
             if (pdfBannerStart && pdfBannerEnd) {
-                bannerDesc = 'Website Banner (' + new Date(pdfBannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',year:'numeric'}) + ' \u2013 ' + new Date(pdfBannerEnd + 'T00:00:00').toLocaleDateString('en-US', {month:'short',year:'numeric'}) + ')';
+                bannerDesc = 'Website Banner (' + new Date(pdfBannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',year:'numeric'}) + ' – ' + new Date(pdfBannerEnd + 'T00:00:00').toLocaleDateString('en-US', {month:'short',year:'numeric'}) + ')';
             }
             doc.text(bannerDesc, m + 1, y);
             doc.text('$' + STATE.bannerPrice.toLocaleString(), rightCol - 2, y, { align: 'right' });
@@ -1839,7 +1770,7 @@ function generatePDF() {
             doc.setFontSize(7);
             var periodStr = 'Period: ';
             if (bannerStart && bannerEnd) {
-                periodStr += new Date(bannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + ' \u2013 ' + new Date(bannerEnd + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+                periodStr += new Date(bannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + ' – ' + new Date(bannerEnd + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
             } else if (bannerStart) {
                 periodStr += 'Starting ' + new Date(bannerStart + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
             } else {
@@ -1850,7 +1781,25 @@ function generatePDF() {
         }
         y += 1;
     }
-
+    // Section sponsorships / premium placement
+    var pdfSponsorItems = getSponsorshipItems();
+    var pdfSponsorTotal = 0;
+    if (pdfSponsorItems.length > 0) {
+        checkPageBreak(8 + pdfSponsorItems.length * 4);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8);
+        doc.text('SECTION SPONSORSHIPS / PREMIUM PLACEMENT', m, y);
+        y += 4;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        pdfSponsorItems.forEach(function(s) {
+            doc.text(s.label, m + 1, y);
+            doc.text('$' + s.amount.toLocaleString(), rightCol - 2, y, { align: 'right' });
+            pdfSponsorTotal += s.amount;
+            y += 4;
+        });
+        y += 1;
+    }
     // Additional options
     var optDesign = document.getElementById('opt-design').checked;
     var optNcaa = document.getElementById('opt-ncaa').checked;
@@ -1863,7 +1812,6 @@ function generatePDF() {
         doc.text('Additional: ' + opts.join(' | '), m, y);
         y += 4;
     }
-
     // Notes
     var notes = document.getElementById('notes').value;
     if (notes) {
@@ -1873,7 +1821,6 @@ function generatePDF() {
         doc.text(noteLines, m, y);
         y += noteLines.length * 3.5 + 2;
     }
-
     // TOTALS
     var pdfBanner = hasBanner ? STATE.bannerPrice : 0;
     var pdfEmail = 0;
@@ -1890,8 +1837,7 @@ function generatePDF() {
             pdfEmail = emailQty === 4 ? 1800 : emailInS * 500 + emailOffS * 400;
         }
     }
-    var pdfSubtotal = magazineTotal + pdfBanner + pdfEmail;
-
+    var pdfSubtotal = magazineTotal + pdfBanner + pdfEmail + pdfSponsorTotal;
     var pdfDiscountItems = [];
     document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
         var desc = row.querySelector('input[type="text"]').value || 'Discount';
@@ -1906,14 +1852,12 @@ function generatePDF() {
     var pdfGrandTotal = pdfSubtotal - pdfTotalDiscount;
     var singleRateTotal = calcSingleRateTotal();
     var savingsAmount = singleRateTotal - pdfGrandTotal;
-
     checkPageBreak(35);
     y += 1;
     doc.setDrawColor(196, 30, 58);
     doc.setLineWidth(0.4);
     doc.line(m, y, pw - m, y);
     y += 4;
-
     var totalsX = pw / 2 + 20;
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
@@ -1921,14 +1865,12 @@ function generatePDF() {
     doc.text('Subtotal:', totalsX, y);
     doc.text('$' + pdfSubtotal.toLocaleString(), rightCol - 2, y, { align: 'right' });
     y += 4;
-
     pdfDiscountItems.forEach(function(d) {
         doc.setTextColor(45, 138, 78);
         doc.text(d.label + ':', totalsX, y);
         doc.text('-$' + d.amount.toLocaleString(), rightCol - 2, y, { align: 'right' });
         y += 4;
     });
-
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.3);
     doc.line(totalsX, y - 1, rightCol, y - 1);
@@ -1939,7 +1881,6 @@ function generatePDF() {
     doc.text('Total:', totalsX, y);
     doc.text('$' + pdfGrandTotal.toLocaleString(), rightCol - 2, y, { align: 'right' });
     y += 4;
-
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
     var issueCount = Object.keys(STATE.selectedIssues).length;
@@ -1956,22 +1897,19 @@ function generatePDF() {
         y += 3.5;
     }
     y += 1;
-
     doc.setTextColor(100, 100, 100);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text('NET 30. Finance charge 1.5%/mo on balances past 30 days.', m, y);
     y += 3;
-    doc.text('This Insertion Order Contract locks in Volume 32 (2026) pricing and discounts for 3 years providing this base contract', m, y);
+    doc.text('This Insertion Order Contract locks in Volume 33 (2026–27) pricing and discounts for 3 years providing this base contract', m, y);
     y += 3;
     doc.text('at a minimum renews annually each year without a lapse. If the contract is a renewal, the original Contract\'s Fixed Price and Discount will be noted above.', m, y);
     y += 5;
-
     // PAGE 1 SIGNATURES
     checkPageBreak(25);
     addSignatures(y, signedBy, advName, contactName);
     addFooter(1);
-
     // TERMS & CONDITIONS PAGE
     doc.addPage();
     y = 0;
@@ -1982,21 +1920,19 @@ function generatePDF() {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text('Terms & Conditions \u2014 ' + advName, m, 12);
+    doc.text('Terms & Conditions — ' + advName, m, 12);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text('Order Date: ' + orderDate, pw - m, 12, { align: 'right' });
     y = 26;
-
     doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
-
     var terms = [
         '1. PAYMENT: All invoices are due NET 30 from invoice date. A finance charge of 1.5% per month (18% annually) will be applied to all balances past 30 days.',
         '2. CANCELLATION: Advertiser may cancel with 30 days written notice. Cancellation of annual or multi-issue packages before completion voids package pricing; advertiser will be invoiced at single insertion rates for issues already published.',
         '3. AD MATERIALS: Advertiser is responsible for providing print-ready ad materials by the published deadlines. WIN Magazine is not responsible for errors in advertiser-supplied materials.',
-        '4. PLACEMENT: WIN Magazine will make reasonable efforts to honor premium placement requests but does not guarantee specific positioning unless confirmed in writing.',
+        '4. PLACEMENT: WIN Magazine will make reasonable efforts to honor premium placement requests but does not guarantee specific positioning unless confirmed in writing. Paid section sponsorships and premium placements confirmed on this insertion order are guaranteed for the issues listed.',
         '5. CONTENT: WIN Magazine reserves the right to refuse any advertising copy that it deems inappropriate, misleading, or not in keeping with the publication\'s standards.',
         '6. LIABILITY: WIN Magazine\'s liability for errors or omissions shall not exceed the cost of the ad space in which the error occurred. Claims must be made within 30 days of publication.',
         '7. 3-YEAR FIXED PRICE: This insertion order locks in current pricing for up to three (3) consecutive publication years, provided the advertiser maintains continuous participation. Pricing reverts to current rates if participation lapses.',
@@ -2004,22 +1940,18 @@ function generatePDF() {
         '9. INDEMNIFICATION: Advertiser agrees to indemnify and hold harmless WIN Magazine from any claims arising from the content of advertisements placed by the advertiser.',
         '10. ENTIRE AGREEMENT: This insertion order, together with these terms and conditions, constitutes the entire agreement between the parties.'
     ];
-
     terms.forEach(function(term) {
         var tLines = doc.splitTextToSize(term, pw - 2 * m);
         doc.text(tLines, m, y);
         y += tLines.length * 4 + 2.5;
     });
-
     y += 3;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.text('By signing below, both parties agree to the insertion order and terms stated above.', m, y);
     y += 5;
-
     addSignatures(y, signedBy, advName, contactName);
     addFooter(doc.internal.getNumberOfPages());
-
     // Add page numbers
     var numPages = doc.internal.getNumberOfPages();
     for (var i = 1; i <= numPages; i++) {
@@ -2029,30 +1961,25 @@ function generatePDF() {
         doc.setFont('helvetica', 'normal');
         doc.text('Page ' + i + ' of ' + numPages, pw - m, ph - 4, { align: 'right' });
     }
-
     return doc;
 }
-
 // ============================================================
 //  PDF PREVIEW MODAL
 // ============================================================
 var pendingDoc = null;
 var pendingFilename = '';
-
 function closePdfModal() {
     document.getElementById('pdf-modal').classList.remove('visible');
     document.getElementById('pdf-iframe').src = '';
     pendingDoc = null;
     pendingFilename = '';
 }
-
 function sendToGina() {
     if (!pendingDoc) return;
     var btn = document.getElementById('btn-send-gina');
     var statusEl = document.getElementById('status-msg');
     btn.textContent = 'Sending...';
     btn.disabled = true;
-
     try {
         pendingDoc.save(pendingFilename);
         var pdfBase64 = pendingDoc.output('datauristring').split(',')[1];
@@ -2069,7 +1996,6 @@ function sendToGina() {
                 price: getIssuePriceFromState(key, tierInfo.tier)
             });
         });
-
         var payload = {
             advertiser: document.getElementById('advertiser-name').value,
             acctNumber: document.getElementById('acct-number').value,
@@ -2086,6 +2012,8 @@ function sendToGina() {
             emailOffSeason: STATE.emailOffSeason,
             bannerStartDate: document.getElementById('banner-start-date').value,
             bannerEndDate: document.getElementById('banner-end-date').value,
+            sponsorships: getSponsorshipItems(),
+            sponsorshipTotal: getSponsorshipTotal(),
             designNeeded: document.getElementById('opt-design').checked,
             ncaaAd: document.getElementById('opt-ncaa').checked,
             prepayDiscount: document.getElementById('prepay-discount').checked,
@@ -2098,7 +2026,6 @@ function sendToGina() {
             pdfBase64: pdfBase64,
             timestamp: new Date().toISOString()
         };
-
         if (WEBHOOK_URL) {
             fetch(WEBHOOK_URL, {
                 method: 'POST',
@@ -2117,7 +2044,6 @@ function sendToGina() {
                 statusEl.textContent = 'PDF downloaded but webhook error: ' + err.message + '. Send manually.';
             });
         }
-
         localStorage.removeItem(DRAFT_KEY);
     } catch (error) {
         statusEl.className = 'status-message error';
@@ -2128,18 +2054,15 @@ function sendToGina() {
         btn.disabled = false;
     }
 }
-
 // ============================================================
 //  SUBMIT (Preview Flow)
 // ============================================================
 function submitForm() {
     var advName = document.getElementById('advertiser-name').value;
     if (!advName) { alert('Please enter an advertiser name.'); return; }
-
     var btn = document.getElementById('submit-btn');
     btn.textContent = 'Generating...';
     btn.disabled = true;
-
     try {
         pendingDoc = generatePDF();
         pendingFilename = 'WIN_IO_' + advName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + new Date().toISOString().slice(0, 10) + '.pdf';
@@ -2155,7 +2078,6 @@ function submitForm() {
         btn.disabled = false;
     }
 }
-
 // ============================================================
 //  DRAFT SAVING (localStorage)
 // ============================================================
@@ -2189,7 +2111,8 @@ function saveDraft() {
                 signedBy: document.getElementById('signed-by').value,
                 signDate: document.getElementById('sign-date').value
             },
-            discounts: []
+            discounts: [],
+            sponsorships: []
         };
         document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
             draft.discounts.push({
@@ -2197,36 +2120,36 @@ function saveDraft() {
                 amt: row.querySelector('input[type="number"]').value
             });
         });
+        document.querySelectorAll('#sponsorships-container .discount-row').forEach(function(row) {
+            draft.sponsorships.push({
+                desc: row.querySelector('input[type="text"]').value,
+                amt: row.querySelector('input[type="number"]').value
+            });
+        });
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     } catch(e) { /* silent */ }
 }
-
 function attachAutoSave() {
     var form = document.getElementById('io-form');
     form.addEventListener('input', function() { saveDraft(); });
     form.addEventListener('change', function() { saveDraft(); });
 }
-
 function hasDraft() {
     try { return !!localStorage.getItem(DRAFT_KEY); } catch(e) { return false; }
 }
-
 function getDraftAdvertiserName() {
     try {
         var d = JSON.parse(localStorage.getItem(DRAFT_KEY));
         return d && d.fields && d.fields.advertiserName ? d.fields.advertiserName : 'Unknown';
     } catch(e) { return 'Unknown'; }
 }
-
 function restoreDraft() {
     document.getElementById('draft-modal').classList.remove('visible');
     try {
         var draft = JSON.parse(localStorage.getItem(DRAFT_KEY));
         if (!draft) { init(); return; }
-
         // Restore STATE
         STATE = draft.state;
-
         // Restore form fields
         var f = draft.fields;
         document.getElementById('advertiser-name').value = f.advertiserName || '';
@@ -2238,7 +2161,7 @@ function restoreDraft() {
         document.getElementById('billing-group').style.display = f.newCustomer ? 'block' : 'none';
         document.getElementById('package-type').value = f.packageType || 'custom';
         document.getElementById('default-size').value = f.defaultSize || 'full';
-        document.getElementById('start-volume').value = f.startVolume || '32';
+        document.getElementById('start-volume').value = f.startVolume || '33';
         document.getElementById('start-issue').value = f.startIssue || '0';
         document.getElementById('customize-sizes').checked = f.customizeSizes || false;
         document.getElementById('web-banner').checked = f.webBanner || false;
@@ -2259,7 +2182,6 @@ function restoreDraft() {
         document.getElementById('notes').value = f.notes || '';
         document.getElementById('signed-by').value = f.signedBy || 'Bryan';
         document.getElementById('sign-date').value = f.signDate || new Date().toISOString().split('T')[0];
-
         // Restore discounts
         var container = document.getElementById('discounts-container');
         container.innerHTML = '';
@@ -2272,14 +2194,23 @@ function restoreDraft() {
                 lastRow.querySelector('input[type="number"]').value = d.amt || '';
             });
         }
-
+        // Restore sponsorships
+        var sponsorContainer = document.getElementById('sponsorships-container');
+        sponsorContainer.innerHTML = '';
+        if (draft.sponsorships) {
+            draft.sponsorships.forEach(function(s) {
+                addSponsorship();
+                var sRows = sponsorContainer.querySelectorAll('.discount-row');
+                var lastSRow = sRows[sRows.length - 1];
+                lastSRow.querySelector('input[type="text"]').value = s.desc || '';
+                lastSRow.querySelector('input[type="number"]').value = s.amt || '';
+            });
+        }
         // Rebuild accordion and sync
         buildVolumeSelector();
         syncStateToDOM();
-
         // Sync volume checkboxes and show checked volume sections
         syncStateToDOM();
-
         recalculate();
         attachAutoSave();
     } catch(e) {
@@ -2288,13 +2219,11 @@ function restoreDraft() {
         init();
     }
 }
-
 function clearDraftAndInit() {
     document.getElementById('draft-modal').classList.remove('visible');
     localStorage.removeItem(DRAFT_KEY);
     init();
 }
-
 // ============================================================
 //  RESET
 // ============================================================
@@ -2302,9 +2231,10 @@ function resetForm() {
     if (!confirm('Clear all form data?')) return;
     document.getElementById('io-form').reset();
     document.getElementById('discounts-container').innerHTML = '';
+    document.getElementById('sponsorships-container').innerHTML = '';
     STATE.selectedIssues = {};
     STATE.customizeSizes = false;
-    STATE.expandedVolumes = { 32: true };
+    STATE.expandedVolumes = { 33: true };
     STATE.bannerPrice = 2600;
     STATE.emailInSeason = 0;
     STATE.emailOffSeason = 0;
@@ -2320,7 +2250,6 @@ function resetForm() {
     detectNextIssue();
     recalculate();
 }
-
 // ============================================================
 //  LOGIN
 // ============================================================
