@@ -697,6 +697,13 @@
                 <div id="sponsorships-container"></div>
                 <button type="button" class="add-btn" onclick="addSponsorship()">+ Add Sponsorship / Placement Charge</button>
             </div>
+            <!-- ADDITIONAL LINE ITEMS -->
+            <div class="form-section">
+                <h2>Additional Line Items</h2>
+                <div class="sponsorship-hint">Add any other charge to this insertion order with a custom name and price (e.g., "Ad Design Fee", "Event Program Ad", "Rush Fee").</div>
+                <div id="line-items-container"></div>
+                <button type="button" class="add-btn" onclick="addLineItem()">+ Add Line Item</button>
+            </div>
             <!-- ADDITIONAL OPTIONS -->
             <div class="form-section">
                 <h2>Additional Options</h2>
@@ -1245,6 +1252,33 @@ function getSponsorshipTotal() {
     return total;
 }
 // ============================================================
+//  ADDITIONAL LINE ITEMS
+// ============================================================
+function addLineItem() {
+    var container = document.getElementById('line-items-container');
+    var row = document.createElement('div');
+    row.className = 'discount-row';
+    row.innerHTML =
+        '<input type="text" placeholder="Line item name..." oninput="recalculate();saveDraft()">' +
+        '<input type="number" placeholder="$ amount" step="0.01" min="0" oninput="recalculate();saveDraft()">' +
+        '<button type="button" class="remove-btn" onclick="this.parentElement.remove();recalculate();saveDraft();">&times;</button>';
+    container.appendChild(row);
+}
+function getLineItems() {
+    var items = [];
+    document.querySelectorAll('#line-items-container .discount-row').forEach(function(row) {
+        var desc = row.querySelector('input[type="text"]').value || 'Additional Line Item';
+        var amt = parseFloat(row.querySelector('input[type="number"]').value) || 0;
+        if (amt !== 0) items.push({ label: desc, amount: Math.abs(amt) });
+    });
+    return items;
+}
+function getLineItemsTotal() {
+    var total = 0;
+    getLineItems().forEach(function(li) { total += li.amount; });
+    return total;
+}
+// ============================================================
 //  PRICING ENGINE
 // ============================================================
 function getEmailTotalWeeks() {
@@ -1365,7 +1399,9 @@ function recalculate() {
     var sponsorshipItems = getSponsorshipItems();
     var sponsorshipTotal = 0;
     sponsorshipItems.forEach(function(s) { sponsorshipTotal += s.amount; });
-    var subtotal = magazineTotal + emailTotal + bannerTotal + sponsorshipTotal;
+    var lineItems = getLineItems();
+    var lineItemsTotal = getLineItemsTotal();
+    var subtotal = magazineTotal + emailTotal + bannerTotal + sponsorshipTotal + lineItemsTotal;
     var totalDiscounts = 0;
     var discountLines = [];
     document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
@@ -1411,6 +1447,9 @@ function recalculate() {
     sponsorshipItems.forEach(function(s) {
         html += '<div class="total-line"><span class="label">' + s.label + '</span><span>$' + s.amount.toLocaleString() + '</span></div>';
     });
+    lineItems.forEach(function(li) {
+        html += '<div class="total-line"><span class="label">' + escapeHtml(li.label) + '</span><span>$' + li.amount.toLocaleString() + '</span></div>';
+    });
     html += '<div class="total-line subtotal"><span class="label">Subtotal</span><span>$' + subtotal.toLocaleString() + '</span></div>';
     discountLines.forEach(function(d) {
         html += '<div class="total-line discount"><span class="label">' + d.label + '</span><span>-$' + Math.abs(d.amount).toLocaleString() + '</span></div>';
@@ -1433,6 +1472,9 @@ function recalculate() {
 // ============================================================
 //  HELPERS
 // ============================================================
+function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 function toTitleCase(str) {
     if (!str) return '';
     return str.replace(/\w\S*/g, function(txt) {
@@ -1459,6 +1501,7 @@ function calcSingleRateTotal() {
         total += STATE.bannerPrice;
     }
     total += getSponsorshipTotal();
+    total += getLineItemsTotal();
     return total;
 }
 // Get volume range string from selected issues
@@ -1800,6 +1843,25 @@ function generatePDF() {
         });
         y += 1;
     }
+    // Additional line items
+    var pdfLineItems = getLineItems();
+    var pdfLineItemsTotal = 0;
+    if (pdfLineItems.length > 0) {
+        checkPageBreak(8 + pdfLineItems.length * 4);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8);
+        doc.text('ADDITIONAL LINE ITEMS', m, y);
+        y += 4;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        pdfLineItems.forEach(function(li) {
+            doc.text(li.label, m + 1, y);
+            doc.text('$' + li.amount.toLocaleString(), rightCol - 2, y, { align: 'right' });
+            pdfLineItemsTotal += li.amount;
+            y += 4;
+        });
+        y += 1;
+    }
     // Additional options
     var optDesign = document.getElementById('opt-design').checked;
     var optNcaa = document.getElementById('opt-ncaa').checked;
@@ -1837,7 +1899,7 @@ function generatePDF() {
             pdfEmail = emailQty === 4 ? 1800 : emailInS * 500 + emailOffS * 400;
         }
     }
-    var pdfSubtotal = magazineTotal + pdfBanner + pdfEmail + pdfSponsorTotal;
+    var pdfSubtotal = magazineTotal + pdfBanner + pdfEmail + pdfSponsorTotal + pdfLineItemsTotal;
     var pdfDiscountItems = [];
     document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
         var desc = row.querySelector('input[type="text"]').value || 'Discount';
@@ -2014,6 +2076,8 @@ function sendToGina() {
             bannerEndDate: document.getElementById('banner-end-date').value,
             sponsorships: getSponsorshipItems(),
             sponsorshipTotal: getSponsorshipTotal(),
+            lineItems: getLineItems(),
+            lineItemsTotal: getLineItemsTotal(),
             designNeeded: document.getElementById('opt-design').checked,
             ncaaAd: document.getElementById('opt-ncaa').checked,
             prepayDiscount: document.getElementById('prepay-discount').checked,
@@ -2112,7 +2176,8 @@ function saveDraft() {
                 signDate: document.getElementById('sign-date').value
             },
             discounts: [],
-            sponsorships: []
+            sponsorships: [],
+            lineItems: []
         };
         document.querySelectorAll('#discounts-container .discount-row').forEach(function(row) {
             draft.discounts.push({
@@ -2122,6 +2187,12 @@ function saveDraft() {
         });
         document.querySelectorAll('#sponsorships-container .discount-row').forEach(function(row) {
             draft.sponsorships.push({
+                desc: row.querySelector('input[type="text"]').value,
+                amt: row.querySelector('input[type="number"]').value
+            });
+        });
+        document.querySelectorAll('#line-items-container .discount-row').forEach(function(row) {
+            draft.lineItems.push({
                 desc: row.querySelector('input[type="text"]').value,
                 amt: row.querySelector('input[type="number"]').value
             });
@@ -2206,6 +2277,18 @@ function restoreDraft() {
                 lastSRow.querySelector('input[type="number"]').value = s.amt || '';
             });
         }
+        // Restore additional line items
+        var lineItemContainer = document.getElementById('line-items-container');
+        lineItemContainer.innerHTML = '';
+        if (draft.lineItems) {
+            draft.lineItems.forEach(function(li) {
+                addLineItem();
+                var liRows = lineItemContainer.querySelectorAll('.discount-row');
+                var lastLiRow = liRows[liRows.length - 1];
+                lastLiRow.querySelector('input[type="text"]').value = li.desc || '';
+                lastLiRow.querySelector('input[type="number"]').value = li.amt || '';
+            });
+        }
         // Rebuild accordion and sync
         buildVolumeSelector();
         syncStateToDOM();
@@ -2232,6 +2315,7 @@ function resetForm() {
     document.getElementById('io-form').reset();
     document.getElementById('discounts-container').innerHTML = '';
     document.getElementById('sponsorships-container').innerHTML = '';
+    document.getElementById('line-items-container').innerHTML = '';
     STATE.selectedIssues = {};
     STATE.customizeSizes = false;
     STATE.expandedVolumes = { 33: true };
